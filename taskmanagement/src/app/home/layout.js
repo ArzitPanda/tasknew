@@ -49,7 +49,7 @@ else
            <Link href="/home/Team"> Teams</Link>
           </Menu.Item>
           <Menu.Item key="3" icon={<UserOutlined />}>
-            Profile
+          <Link href="/home/Profile"> Profile</Link>
           </Menu.Item>
           {
             isTaskVisible && 

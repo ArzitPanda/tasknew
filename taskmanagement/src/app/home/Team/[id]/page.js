@@ -1,20 +1,60 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal, Form, Input, message, List } from 'antd';
 import { TeamOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useContext } from 'react';
+import { AppContext } from '@/app/layout';
+import axios from 'axios';
 
-const TeamManagementComponent = () => {
+
+const TeamManagementComponent = ({ params }) => {
+  console.log(params.id);
   const [addUserVisible, setAddUserVisible] = useState(false);
   const [updateTeamVisible, setUpdateTeamVisible] = useState(false);
   const [deleteTeamVisible, setDeleteTeamVisible] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [teamCreator, setCreator] = useState();
+const context =useContext(AppContext);
+
+
+
+
+useEffect(() => {
+
+  const fetchTeamData = async () => {
+
+
+    console.log("hello world ")
+    try {
+      const response = await axios.get(`http://localhost:3001/team/team/get/${params.id}`);
+      console.log('Team data:', response.data);
+        setTeamMembers(response.data?.teamMembers)
+        setCreator(response.data?.teamCreator)
+
+
+      // Handle the response data as needed
+    } catch (error) {
+      console.error('Error fetching team data:', error);
+      // Handle errors
+    }
+  };
+  
+  // Call the function to fetch team data
+  fetchTeamData();
+
+
+
+
+},[]);
 
   const handleAddUserOk = () => {
     // Handle form submission here
     setAddUserVisible(false);
     message.success('User added to team successfully');
   };
+
+
 
   const handleUpdateTeamOk = () => {
     // Handle form submission here
@@ -87,27 +127,32 @@ const TeamManagementComponent = () => {
       {/* Buttons for Actions */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl text-black font-bold">Team Management</h2>
-        <Button type="primary" icon={<TeamOutlined />} onClick={() => setAddUserVisible(true)}>
-          Add User to Team
-        </Button>
+       {
+        teamCreator?._id === context.user?._id && ( <Button type="dashed" icon={<TeamOutlined />} onClick={() => setAddUserVisible(true)}>
+        Add User to Team
+      </Button>)
+       }
       </div>
 
       <div className="flex flex-row justify-between items-center mb-4 w-52 gap-4">
+      {
+        teamCreator?._id === context.user?._id && ( <><Button  color='blue'  icon={<EditOutlined />} onClick={() => setUpdateTeamVisible(true)}>
+        Update Team Details
+      </Button>
+      <Button type="primary" danger icon={<DeleteOutlined />} onClick={() => setDeleteTeamVisible(true)}>
+        Delete Team
+      </Button></>)
+       }
         
-        <Button type="primary" icon={<EditOutlined />} onClick={() => setUpdateTeamVisible(true)}>
-          Update Team Details
-        </Button>
-        <Button type="primary" danger icon={<DeleteOutlined />} onClick={() => setDeleteTeamVisible(true)}>
-          Delete Team
-        </Button>
       </div>
       <div className="mb-4">
         <h3 className="text-lg font-semibold mb-2 text-black">Team Members</h3>
         <List
+     
           bordered
           dataSource={teamMembers}
           renderItem={(item) => (
-            <List.Item>
+            <List.Item    key={item._id}>
               {item.name} - {item.email}
             </List.Item>
           )}

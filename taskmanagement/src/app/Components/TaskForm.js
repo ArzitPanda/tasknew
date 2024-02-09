@@ -80,7 +80,7 @@ const TaskForm = () => {
       </Select>
     
      
-      <Button type="primary" onClick={handleTaskSubmission}>Submit Task</Button>
+      <Button type="default" onClick={handleTaskSubmission}>Submit Task</Button>
     </div>
   );
 };

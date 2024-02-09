@@ -27,15 +27,15 @@
         },
         Teams:[{
             type:mongose.Schema.Types.ObjectId,
-            ref:'Team'
+            ref:'Team',
         }],
         ActiveTeam:{
             type:mongose.Schema.Types.ObjectId,
-            ref:'Team'
+            ref:'Team',
         },
         Tasks:[{
             type:mongose.Schema.Types.ObjectId,
-            ref:'Task'
+            ref:'Task',
         }],
 
 
@@ -45,7 +45,7 @@
 
 
     })
-
+   
 
 const User  = mongose.model("User",userSchema);
 module.exports = User;

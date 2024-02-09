@@ -19,10 +19,10 @@ router.get('/team/get/:teamId',async (req,res)=>{
         const teamId = req.params.teamId;
 
 
-        const team = await Team.findById(teamId).populate('tasks').exec();
+        const team = await Team.findById(teamId).populate('tasks').populate('teamMembers').populate('teamCreator').exec();
+      console.log(team)
 
-
-     res.send(team.tasks)
+     res.send(team)
 
 
 })
@@ -34,28 +34,6 @@ router.get('/team/get/:teamId',async (req,res)=>{
 
 
 
-/**
- * @swagger
- * /create:
- *   post:
- *     summary: Create a new team
- *     tags: [Teams]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           example:
- *             teamName: Team A
- *             description: A description of Team A
- *             teamCreator: <user-id>
- *     responses:
- *       201:
- *         description: Team created successfully
- *       400:
- *         description: Team with this name already exists
- *       500:
- *         description: Internal Server Error
- */
 router.post('/team/create', async (req, res) => {
   try {
     const { teamName, description, teamCreator } = req.body;
@@ -74,7 +52,21 @@ router.post('/team/create', async (req, res) => {
     });
 
     // Save the team to the database
-    const savedTeam = await newTeam.save();
+
+
+  newTeam.teamMembers.push(teamCreator)
+    const savedTeam = await newTeam.save()
+    console.log(savedTeam);
+    const user = await User.findById(teamCreator);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+
+
+  user.Teams.push(savedTeam._id);
+    await user.save()
 
     res.status(201).json(savedTeam);
   } catch (error) {
@@ -84,33 +76,7 @@ router.post('/team/create', async (req, res) => {
 });
 
 // Route for adding a user to a team
-/**
- * @swagger
- * /add-user/{teamId}:
- *   post:
- *     summary: Add a user to a team
- *     tags: [Teams]
- *     parameters:
- *       - in: path
- *         name: teamId
- *         required: true
- *         description: ID of the team
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           example:
- *             userId: <user-id>
- *     responses:
- *       200:
- *         description: User added to the team successfully
- *       404:
- *         description: Team or user not found
- *       500:
- *         description: Internal Server Error
- */
+
 router.post('/team/add-user/:teamId', async (req, res) => {
   try {
     const { teamId } = req.params;
@@ -146,35 +112,7 @@ router.post('/team/add-user/:teamId', async (req, res) => {
 });
 
 // Route for updating a team
-/**
- * @swagger
- * /update/{teamId}:
- *   put:
- *     summary: Update a team by ID
- *     tags: [Teams]
- *     parameters:
- *       - in: path
- *         name: teamId
- *         required: true
- *         description: ID of the team
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           example:
- *             teamName: Updated Team Name
- *             description: Updated description
- *             isActive: true
- *     responses:
- *       200:
- *         description: Team updated successfully
- *       404:
- *         description: Team not found
- *       500:
- *         description: Internal Server Error
- */
+
 router.put('/team/update/:teamId', async (req, res) => {
   try {
     const { teamId } = req.params;
@@ -204,27 +142,7 @@ router.put('/team/update/:teamId', async (req, res) => {
 
 
 // Route for deleting a team
-/**
- * @swagger
- * /delete/{teamId}:
- *   delete:
- *     summary: Delete a team by ID
- *     tags: [Teams]
- *     parameters:
- *       - in: path
- *         name: teamId
- *         required: true
- *         description: ID of the team
- *         schema:
- *           type: string
- *     responses:
- *       204:
- *         description: Team deleted successfully
- *       404:
- *         description: Team not found
- *       500:
- *         description: Internal Server Error
- */
+
 router.delete('/team/delete/:teamId', async (req, res) => {
   try {
     const { teamId } = req.params;
@@ -244,5 +162,51 @@ router.delete('/team/delete/:teamId', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+router.get('/team/:UserId', async (req, res) =>{
+
+  const idx = req.params.UserId;
+
+  try {
+
+
+  //  const data = await  User.aggregate([
+  //     {
+  //       $match: { // Your query criteria
+  //         _id: idx,
+  //       },
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: 'Team', // Collection name of referenced documents
+  //         localField: 'Teams', // Array containing IDs
+  //         foreignField: '_id', // Field matching IDs in referenced collection
+  //         as: 'populatedArray', // Name for the populated array
+  //       },
+  //     },
+  //   ]).exec();
+  //   console.log(data)
+
+
+
+  const user = await User.findById(idx).populate('Teams');
+
+
+
+
+
+  console.log(user )
+res.send(user);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error'})
+  }
+
+
+})
+
 
 module.exports = router;

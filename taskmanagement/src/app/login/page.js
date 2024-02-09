@@ -1,17 +1,46 @@
 'use client'
 import { Checkbox, Form, Input ,Button} from 'antd';
+import axios from 'axios';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 
 const page = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+
+    const router = useRouter();
     // Handle form submission
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e) => {
+       
         console.log('Form submitted:', { username, password });
+
+        try {
+            const response = await axios.post('http://localhost:3001/user/login', {
+                email: username,
+                password: password
+            });
+            
+
+            
+            // Assuming the response contains the token and userId
+            const { token, userId } = response.data;
+    
+            // You can save the token and userId to local storage or state
+            // For example, you can use localStorage:
+            localStorage.setItem('token', token);
+            localStorage.setItem('userId', userId);
+    
+            // Do something after successful login, like redirecting to a dashboard page
+            // Example: history.push('/dashboard');
+            router.push("/home");
+        } catch (error) {
+            // Handle error
+            console.error('Login failed:', error);
+            // You can display an error message to the user
+        }
+
         // You can add your login logic here
     };
 

@@ -8,41 +8,6 @@ const UserTemp = require("../Models/TempUser.js")
 // Route for user registration (signup)
 
 
-/**
- * @swagger
- * /signup:
- *   post:
- *     summary: Register a new user
- *     tags: [Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               dateOfBirth:
- *                 type: string
- *                 format: date
- *           example:
- *             name: John Doe
- *             email: john@example.com
- *             password: mySecurePassword
- *             dateOfBirth: 1990-01-01
- *     responses:
- *       201:
- *         description: User registered successfully
- *       400:
- *         description: User with this email already exists
- *       500:
- *         description: Internal Server Error
- */
 router.post('/signup', async (req, res) => {
   try {
     const { name, email, password, dateOfBirth } = req.body;
@@ -101,4 +66,36 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
+router.get('/getUser/:userId', async (req, res) => {
+  try {
+    // Get the token from the request headers
+    // const token = req.headers.authorization.split(' ')[1];
+
+    // Verify the token
+    // const decodedToken = jwt.verify(token, 'your-secret-key');
+
+    // Extract userId from the query parameters
+    const userId = req.params.userId;
+
+    // Check if the userId in the token matches the userId in the query parameters
+    // if (decodedToken.userId !== userId) {
+    //   return res.status(401).json({ error: 'Unauthorized' });
+    // }
+
+    // If the userId matches, find the user in the database
+    const user = await User.findById(userId).populate('Teams');
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // If the user exists, return the user data
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 module.exports = router;
