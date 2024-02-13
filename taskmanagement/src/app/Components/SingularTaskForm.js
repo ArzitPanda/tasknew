@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const { Option } = Select;
 
-const TaskForm = () => {
+const TaskFormSingular = ({user,Team}) => {
 
   const context = useContext(AppContext)
 
@@ -17,7 +17,7 @@ const TaskForm = () => {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState(null);
-  const [team, setTeam] = useState('');
+  const [team, setTeam] = useState(Team._id);
   const [assignedBy, setAssignedBy] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [status, setStatus] = useState('');
@@ -34,30 +34,30 @@ const TaskForm = () => {
 const [teamMembers,setTeamMembers] = useState([]);
 
 
-useEffect(()=>{
-const fetchTeamMembers =async ()=>{
+// useEffect(()=>{
+// const fetchTeamMembers =async ()=>{
 
-  if(team!=='')
-  {
-    const data = await axios.get(BASE_URL+"/team/team/get/"+team);
-    const TeamFetched = data.data;
-    setTeamMembers(TeamFetched.teamMembers)
-  }
-
-
+//   if(team!=='')
+//   {
+//     const data = await axios.get(BASE_URL+"/team/team/get/"+team);
+//     const TeamFetched = data.data;
+//     setTeamMembers(TeamFetched.teamMembers)
+//   }
 
 
 
 
-}
+
+
+// }
 
 
 
 
-fetchTeamMembers()
+// fetchTeamMembers()
 
 
-},[team,setTeam])
+// },[team,setTeam])
 
 
 
@@ -74,19 +74,19 @@ fetchTeamMembers()
     setSelectedUserToAdd(value);
   };
 
-  const handleSearch = async (value) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(BASE_URL+`/user/search?q=${value}`);
-      console.log(response.data)
-      setSearchResults(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-      // Handle error here
-    }
-  };
+  // const handleSearch = async (value) => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(BASE_URL+`/user/search?q=${value}`);
+  //     console.log(response.data)
+  //     setSearchResults(response.data);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error(error);
+  //     setLoading(false);
+  //     // Handle error here
+  //   }
+  // };
 
   const handleTaskSubmission = async() => {
     // Implement task submission logic here
@@ -94,7 +94,7 @@ fetchTeamMembers()
     try {
       // Make the Axios POST request
       console.log(selectedUserToAdd)
-      const response = await axios.post(BASE_URL+`/task/api/Task/add-to-member/${selectedUserToAdd}`,  {
+      const response = await axios.post(BASE_URL+`/task/api/Task/add-to-member/${user._id}`,  {
         taskName,
         description,
         dueDate,
@@ -152,14 +152,14 @@ fetchTeamMembers()
         value={team}
         onChange={(value) => setTeam(value)}
       >
-       {
-    context.user?.Teams.map((ele)=>{return(<Option key={ele._id} value={ele._id} >
+       
+    <Option key={Team._id} value={Team._id} >
 
-      {ele.teamName}
+      {Team.teamName}
     
     
-    </Option>)})
-       }
+    </Option>
+       
         {/* Add more options as needed */}
       </Select>
       <div className='p-2 flex flex-col items-start gap-2'>
@@ -167,20 +167,20 @@ fetchTeamMembers()
       <Select
             showSearch
             placeholder="Search for user"
-            onSearch={handleSearch}
+         
             loading={loading}
             filterOption={false}
             className='mb-4 w-full'
             onChange={handleUserSelectChange}
           >
-            {teamMembers.map(user => (
+           
               <Option key={user._id} value={user._id}>
                 <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} size="small">
                   {user.name.charAt(0).toUpperCase()}
                 </Avatar>
                 {user.name}
               </Option>
-            ))}
+           
           </Select>
       
       </div>
@@ -201,4 +201,4 @@ fetchTeamMembers()
   );
 };
 
-export default TaskForm;
+export default TaskFormSingular;

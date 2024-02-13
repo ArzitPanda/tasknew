@@ -98,4 +98,26 @@ router.get('/getUser/:userId', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+
+router.get('/search', async (req, res) => {
+  try {
+    const query = req.query.q;
+    const users = await User.find({
+      $or: [
+        { name: { $regex: query, $options: 'i' } }, // Case-insensitive search for name
+        { email: { $regex: query, $options: 'i' } }, // Case-insensitive search for email
+        // Case-insensitive search for DateOfBirth
+        // Add more fields here if needed
+      ]
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 module.exports = router;

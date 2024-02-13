@@ -10,14 +10,25 @@ const UserRouter = require("./Router/UserRouter.js")
 const TeamRouter = require("./Router/TeamRouter.js")
 const cors = require('cors')
 const specs = swaggerJsdoc(swaggerDef.swaggerOptions);
-
+const http = require('http');
+const socketIo = require('socket.io');
 
 
 const app = express();
 
+const server = http.createServer(app);
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+const io = socketIo(server,{
+    
+    cors: {
+        origin: "*", // Allow requests only from this domain
+        methods: ["GET", "POST"] // Allow only these methods
+      }}
+    );
+
+
 // Serve Swagger UI
 
 
@@ -25,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 
 Dbconnection.DbConnection()
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 app.get("/",(req,res)=>{
 
 
@@ -38,9 +49,38 @@ app.get("/",(req,res)=>{
 })
 
 
-app.use("/task",TaskRouter)
+
+
+io.on('connection', (socket) => {
+    console.log('A client connected');
+
+    // Example: Send notification to client
+    socket.on('joinRoom', (userId) => {
+        // Emit Socket.IO event to notify cl
+        socket.join(userId);
+        console.log(`user join room ${userId}`)
+    });
+});
+
+
+app.use("/task",TaskRouter(io))
 app.use("/user",UserRouter)
-app.use("/team",TeamRouter)
+app.use("/team",TeamRouter(io))
 
 
-app.listen(3001,()=>{console.log(3001)})
+
+app.post('/api/save-push-subscription', (req, res) => {
+    const subscription = req.body.subscription;
+    // Assuming you have the user model
+    User.findByIdAndUpdate(req.body.id, { pushSubscription: subscription })
+        .then(() => {
+            console.log('Push subscription saved for user:', req.body.id);
+            res.sendStatus(200);
+        })
+        .catch((error) => {
+            console.error('Error saving push subscription:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        });
+});
+server.listen(3001,()=>{console.log(3001)})
+

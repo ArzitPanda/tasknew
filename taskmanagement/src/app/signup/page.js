@@ -17,7 +17,7 @@ const router = useRouter();
         // const value = {...values,dataOfBirth:values.dateOfBirth.toString()}
         setLoading(true);
         try {
-            const response = await axios.post('http://127.0.0.1:3000/user/signup', values);
+            const response = await axios.post('http://127.0.0.1:3001/user/signup', values);
             console.log('Signup successful:', response.data);
             router.push("/login")
             // Redirect or perform other actions upon successful signup

@@ -1,19 +1,24 @@
-"use client";
+"use client"
 import React, { useState } from "react";
 import { Button, Input, Form, Modal, message, List, Card } from "antd";
-import axios from "axios";
-import { PlusOutlined, TeamOutlined } from "@ant-design/icons";
+import { FilterOutlined, PlusOutlined, TeamOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { AppContext } from "@/app/layout";
+import { BASE_URL } from "@/app/Constant";
+import axios from "axios";
 
 const HomeTeamPage = () => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [teamName, SetTeamName] = useState("");
+  const [teamDesc, setTeamDesc] = useState("");
+
   const [form] = Form.useForm();
 
   const context = useContext(AppContext);
+  const router = useRouter();
 
   const showModal = () => {
     setVisible(true);
@@ -32,15 +37,22 @@ const HomeTeamPage = () => {
     };
 
     return date.toLocaleString("en-US", options);
-  }
-  const router = useRouter();
+  };
+
   const handleOk = async () => {
     try {
       setLoading(true);
-      const values = await form.validateFields();
-      const response = await axios.post("/team/create", values);
-      console.log("Team created:", response.data);
+
+      const response = await axios.post(BASE_URL + "/team/team/create", { teamCreator: context.user?._id, teamName, description: teamDesc });
+
+      console.log(response.data, "reponse by create Team");
+
+      const Teams = [...context?.user.Teams, response.data];
+
+      context?.setUser({ ...context?.user, Teams: Teams });
       message.success("Team created successfully");
+      setTeamDesc("");
+      SetTeamName("");
       setVisible(false);
     } catch (error) {
       console.error("Team creation error:", error);
@@ -53,86 +65,72 @@ const HomeTeamPage = () => {
   const handleCancel = () => {
     setVisible(false);
   };
-  const data = [
-    {
-      title: "Team 1",
-      description: "Description of Team 1",
-    },
-    {
-      title: "Team 2",
-      description: "Description of Team 2",
-    },
-    {
-      title: "Team 3",
-      description: "Description of Team 3",
-    },
-  ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl">Your Teams</h2>
-          <Button type="dashed" icon={<PlusOutlined />} onClick={showModal}>
-            Add Team
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl">Your Teams</h2>
+        <Button type="dashed" icon={<PlusOutlined />} onClick={showModal}>
+          Add Team
+        </Button>
+      </div>
+      <Modal
+        title="Create a New Team"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="dashed" onClick={handleOk}>
+            Create
+          </Button>,
+        ]}
+      >
+        <Form name="create-team-form" initialValues={{ remember: true }}>
+          <Form.Item
+            name="teamName"
+            rules={[{ required: true, message: "Please enter team name" }]}
+          >
+            <Input placeholder="Team Name" value={teamName} onChange={(e) => SetTeamName(e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            rules={[{ required: true, message: "Please enter description" }]}
+          >
+            <Input.TextArea placeholder="Description" value={teamDesc} onChange={(e) => setTeamDesc(e.target.value)} />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <div className="flex flex-col items-center justify-center gap-6">
+        <div className="flex justify-between items-center w-full mb-4">
+          <Button type="primary" icon={<FilterOutlined />} size="small" ghost>
+            Filter
           </Button>
         </div>
-        <Modal
-          title="Create a New Team"
-          visible={visible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          footer={[
-            <Button key="back" onClick={handleCancel}>
-              Cancel
-            </Button>,
-            <Button key="submit" type="dashed" onClick={handleOk}>
-              Create
-            </Button>,
-          ]}
-        >
-          <Form name="create-team-form" initialValues={{ remember: true }}>
-            <Form.Item
-              name="teamName"
-              rules={[{ required: true, message: "Please enter team name" }]}
-            >
-              <Input placeholder="Team Name" />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              rules={[{ required: true, message: "Please enter description" }]}
-            >
-              <Input.TextArea placeholder="Description" />
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
-      <div>
+
         <List
-          grid={{ gutter: 16, column: 3 }}
+          className="w-full"
+          grid={{ gutter: 16, column: 1 }}
           dataSource={context.user?.Teams}
           renderItem={(item) => (
-            <List.Item>
+            <List.Item key={item._id}>
               <Card
                 title={item.teamName}
                 bordered={false}
-                style={{
-                  width: 300,
-                  marginBottom: 20,
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                }}
                 hoverable
                 onClick={() => {
                   context.setSelectedTeam(item);
                   router.push(`/home/Team/${item._id}`);
                 }}
+                className="flex flex-col rounded-md shadow-md hover:shadow-xl transition-all duration-200"
               >
-                <p>{item.description}</p>
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <p className="text-gray-700 px-4 pt-4">{item.description}</p>
+                <div className="flex items-center justify-between px-4 pb-4">
                   <TeamOutlined className="text-blue-500" />
-                  <p style={{ marginLeft: 5 }}>
-                    {formatDate(item.creationDate)}
-                  </p>
+                  <p className="text-gray-500 font-sm ml-2">{formatDate(item.creationDate)}</p>
                 </div>
               </Card>
             </List.Item>

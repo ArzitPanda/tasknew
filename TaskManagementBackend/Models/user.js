@@ -38,7 +38,10 @@
             ref:'Task',
         }],
 
-
+        pushSubscription: {
+            type: Object ,
+            
+        }
 
         
 

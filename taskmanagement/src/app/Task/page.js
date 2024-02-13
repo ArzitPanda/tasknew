@@ -1,11 +1,16 @@
 "use client"
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import { Button, DatePicker, Input, Select } from 'antd';
  // Import Tailwind CSS styles
-
+import { AppContext } from '../layout';
 const { Option } = Select;
 
 const TaskForm = () => {
+
+
+  const context = useContext(AppContext)
+
+
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState(null);
@@ -70,8 +75,14 @@ const TaskForm = () => {
         value={assignedTo}
         onChange={(value) => setAssignedTo(value)}
       >
-        <Option value="User 1">User 1</Option>
-        <Option value="User 2">User 2</Option>
+       {
+context.user?.Teams.map((ele)=>{return(<Option key={ele._id} value={ele._id} >
+
+  {ele.teamName}
+
+
+</Option>)})
+       }
         {/* Add more options as needed */}
       </Select>
       <Select

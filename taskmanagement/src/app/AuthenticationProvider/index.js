@@ -1,20 +1,31 @@
 'use client'
 import UseLocalstorage from '@/Hooks/UseLocalstorage'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 
 const AuthenticationProvider = ({children}) => {
 
-const LocalData =UseLocalstorage("Auth")
+
 const Router =useRouter();
+
+
+
+
+
+
+
+
 
 useEffect(()=>{
 
-console.log(Router.asPath)
+  const LocalData =localStorage.getItem("token")
+    if(LocalData ===undefined || LocalData===null)
+    {
+      Router.push("/login")
+    }
 
 
-
-},[Router])
+},[])
 
 
 
