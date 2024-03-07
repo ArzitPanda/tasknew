@@ -27,6 +27,7 @@ const ProfilePage = () => {
           <h3 className="text-lg font-bold">Information</h3>
           <p>Date of Birth: {user?.DateOfBirth ? user.DateOfBirth.toDateString() : 'Not provided'}</p>
           <h4 className='text-xl'>Teams</h4>
+       
           <div>
             {
               user?.Teams.map((ele) => (<Tag key={ele._id}>{ele.teamName}</Tag>))
@@ -43,6 +44,7 @@ const ProfilePage = () => {
           </ul>
         </div>
       </Card>
+      
     </div>
   );
 };

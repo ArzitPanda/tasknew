@@ -5,17 +5,28 @@ import { AppContext } from '../layout';
 import { UserOutlined } from '@ant-design/icons';
 import { BASE_URL } from '../Constant';
 import axios from 'axios';
+import dayjs from 'dayjs';
  // Import Tailwind CSS styles
 
 const { Option } = Select;
 
-const TaskFormSingular = ({user,Team}) => {
+const TaskFormSingular = ({task,Team}) => {
 
   const context = useContext(AppContext)
+  console.log(task)
 
+  const [taskName, setTaskName] = useState(task?.taskName);
+  const [description, setDescription] = useState(task?.description);
+  var dateString = task.dueDate;
 
-  const [taskName, setTaskName] = useState('');
-  const [description, setDescription] = useState('');
+  // Parse the date string into a Day.js object
+  const dueDate1 = dayjs(dateString);
+  
+  // Set the locale to English, replace 'en' with your desired locale
+  const dueDateOne = dueDate1.locale('en');
+  
+  // Format the date using the appropriate format for your locale
+  var formattedDate = dueDateOne.format('MMMM DD, YYYY');;
   const [dueDate, setDueDate] = useState(null);
   const [team, setTeam] = useState(Team._id);
   const [assignedBy, setAssignedBy] = useState('');
@@ -74,19 +85,19 @@ const [teamMembers,setTeamMembers] = useState([]);
     setSelectedUserToAdd(value);
   };
 
-  // const handleSearch = async (value) => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(BASE_URL+`/user/search?q=${value}`);
-  //     console.log(response.data)
-  //     setSearchResults(response.data);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error(error);
-  //     setLoading(false);
-  //     // Handle error here
-  //   }
-  // };
+  const handleSearch = async (value) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(BASE_URL+`/user/search?q=${value}`);
+      console.log(response.data)
+      setSearchResults(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      // Handle error here
+    }
+  };
 
   const handleTaskSubmission = async() => {
     // Implement task submission logic here
@@ -94,13 +105,13 @@ const [teamMembers,setTeamMembers] = useState([]);
     try {
       // Make the Axios POST request
       console.log(selectedUserToAdd)
-      const response = await axios.post(BASE_URL+`/task/api/Task/add-to-member/${user._id}`,  {
+      const response = await axios.put(BASE_URL+`/task/api/Task/${task._id}`,  {
         taskName,
         description,
         dueDate,
         team,
         assignedBy:context?.user._id,
-        
+        assignedTo:selectedUserToAdd._id,
         status
       });
       
@@ -127,7 +138,7 @@ const [teamMembers,setTeamMembers] = useState([]);
 
   return (
     <div className="max-w-xl mx-auto mt-8 p-4 bg-gray-100 rounded-lg">
-      <h2 className="text-lg font-bold mb-4">Add New Task</h2>
+      <h2 className="text-lg font-bold mb-4">Update Task</h2>
       <Input
         className="mb-4"
         placeholder="Task Name"
@@ -144,6 +155,7 @@ const [teamMembers,setTeamMembers] = useState([]);
         className="mb-4 w-full"
         placeholder="Due Date"
         value={dueDate}
+        defaultValue={new Date(2024, 2, 7)} 
         onChange={(date) => setDueDate(date)}
       />
       <Select
@@ -167,19 +179,21 @@ const [teamMembers,setTeamMembers] = useState([]);
       <Select
             showSearch
             placeholder="Search for user"
-         
+            onSearch={handleSearch}
             loading={loading}
             filterOption={false}
             className='mb-4 w-full'
             onChange={handleUserSelectChange}
           >
-           
+             {searchResults.map(user => (
               <Option key={user._id} value={user._id}>
                 <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} size="small">
                   {user.name.charAt(0).toUpperCase()}
                 </Avatar>
                 {user.name}
               </Option>
+            ))}
+             
            
           </Select>
       
@@ -188,6 +202,7 @@ const [teamMembers,setTeamMembers] = useState([]);
         className="mb-4 w-full"
         placeholder="Select Status"
         value={status}
+    
         onChange={(value) => setStatus(value)}
       >
         <Option value="To Do">To Do</Option>

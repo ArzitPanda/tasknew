@@ -7,6 +7,7 @@ import {
   DesktopOutlined,
   NotificationOutlined,
   TeamOutlined,
+  UngroupOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
@@ -51,9 +52,7 @@ const context = useContext(AppContext)
     if (isMobile) {
       return (
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="horizontal">
-          <Menu.Item key="1" icon={<DesktopOutlined />}>
-            Dashboard
-          </Menu.Item>
+        
           <Menu.Item key="2" icon={<TeamOutlined />}>
             <Link href="/home/Team"> Teams</Link>
           </Menu.Item>
@@ -71,24 +70,27 @@ const context = useContext(AppContext)
               Task
             </Menu.Item>
           )}
+
+<Menu.Item key="1" icon={<DesktopOutlined />}>
+<Link href="/Teams"> Zoom</Link>
+          </Menu.Item>
         </Menu>
+
       );
     } else {
       return (
         <Sider collapsible>
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-            <Menu.Item key="1" icon={<DesktopOutlined />}>
-            <Link href="/home/Teams"> Zoom</Link>
-            </Menu.Item>
-            <Menu.Item key="2" icon={<TeamOutlined />}>
+           
+            <Menu.Item key="1" icon={<TeamOutlined />}>
               <Link href="/home/Team"> Teams</Link>
             </Menu.Item>
-            <Menu.Item key="3" icon={<UserOutlined />}>
+            <Menu.Item key="2" icon={<UserOutlined />}>
               <Link href="/home/Profile"> Profile</Link>
             </Menu.Item>
-
-            <Menu.Item key={5} icon={<NotificationOutlined />}>
+          
+            <Menu.Item key="3" icon={<NotificationOutlined />}>
               <div
               onClick={()=>{context.setOpenDrawer(true)}}
                 className="flex items-center justify-between w-3/4"
@@ -99,17 +101,17 @@ const context = useContext(AppContext)
                 </div>
               </div>
             </Menu.Item>
-            {isTaskVisible && (
+         
               <Menu.Item
                 key="4"
                 icon={<BookOutlined />}
-                onClick={() => {
-                  setTaskFormVisible(!TaskFormVisible);
-                }}
+              
               >
-                Task
+                  <Link href="/home/Task"> Tasks</Link>
               </Menu.Item>
-            )}
+
+         
+
           </Menu>
         </Sider>
       );
@@ -125,14 +127,7 @@ const context = useContext(AppContext)
             className="site-layout-background"
             style={{ padding: 24, minHeight: 360 }}
           >
-            <Modal
-              open={TaskFormVisible}
-              onCancel={() => {
-                setTaskFormVisible(false);
-              }}
-            >
-              <TaskForm />
-            </Modal>
+           
             {children}
           </div>
         </Content>

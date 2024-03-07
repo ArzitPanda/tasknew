@@ -10,7 +10,28 @@ const webpush = require('../webpush.js')
 module.exports =function(io)
 {
   TaskRouter.get('/api/Task', (req, res) => {
-    Task.find()
+    const { assignedTo, status, dueDateLTE,priority } = req.query; // Get the query parameters from the request
+
+    // Construct the filter object based on the assignedTo, status, and dueDateLTE parameters
+    const filter = {};
+
+    if (assignedTo) {
+        filter.assignedTo = assignedTo;
+    }
+
+    if (status) {
+        filter.status = status;
+    }
+
+    if (dueDateLTE) {
+        filter.dueDate = { $lte: new Date(dueDateLTE) };
+    }
+    if(priority) {
+      filter.priority = priority;
+    }
+
+
+    Task.find(filter)
       .then((tasks) => res.status(200).json(tasks))
       .catch((error) => res.status(500).json({ error: 'Internal Server Error' }));
   });
@@ -90,9 +111,7 @@ module.exports =function(io)
         body: `You have been assigned a new task: ${taskName}`,
         // You can add more data if needed
     });
-  
-    const pushSubscription = userExists.pushSubscription; 
-    await webpush.sendNotification(pushSubscription, payload);
+
   console.log(payload)
       res.status(201).json(savedTask);
     } catch (error) {

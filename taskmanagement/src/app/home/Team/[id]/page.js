@@ -8,6 +8,7 @@ import axios from 'axios';
 import { BASE_URL } from '@/app/Constant';
 import moment from 'moment/moment';
 import TaskFormSingular from '@/app/Components/SingularTaskForm';
+import TaskForm from '@/app/Components/TaskForm';
 
 
 const TeamManagementComponent = ({ params }) => {
@@ -40,7 +41,7 @@ const context =useContext(AppContext);
 
 const [searchResults, setSearchResults] = useState([]);
 const [loading, setLoading] = useState(false);
-
+const [TaskFormVisible,setTaskFormVisible] = useState(false);
 
 useEffect(() => {
 
@@ -127,10 +128,14 @@ useEffect(() => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData,setModalData] = useState();
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item,e) => {
     // Logic to handle item click, for example, open modal
-    setModalData({...modalData,user:item,Team:teamData})
+ 
+
+    setModalData({...modalData,task:item,Team:teamData})
+      console.log(item,"item");
     setModalVisible(true);
+
   };
 
   const handleModalOk = () => {
@@ -267,12 +272,12 @@ useEffect(() => {
     renderItem={(item) => (
       <List.Item
         actions={[
-          <Button type="primary" key="add-task" size="small" onClick={() => handleItemClick(item)}>
+          <Button type="primary" key="add-task" size="small" onClick={(e) => handleItemClick(item,e)}>
             Add Task
           </Button>,
         ]}
         className="cursor-pointer"
-        onClick={() => handleItemClick(item)}
+        onClick={(e) => handleItemClick(item,e)}
         key={item._id}
       >
         <div className="flex items-center">
@@ -289,7 +294,10 @@ useEffect(() => {
 
 <div className="mt-8">
   {/* List title with clear hierarchy */}
-  <h3 className="text-lg font-semibold mb-4 text-blue-500">Tasks</h3>
+ <div className='w-full flex items-center justify-between px-4'>
+ <h3 className="text-lg font-semibold mb-4 text-blue-500">Tasks</h3>
+<button className='text-white bg-blue-500 hover:text-black hover:bg-white px-4 py-2 rounded-md' onClick={()=>{setTaskFormVisible(!TaskFormVisible)}}>AddTask</button>
+ </div>
 
   {/* Tasks list using List.Item for clarity and visual grouping */}
   <List
@@ -325,10 +333,18 @@ useEffect(() => {
 
 <Modal open={modalVisible} onCancel={()=>{setModalVisible(false)}}>
 
-      <TaskFormSingular Team={modalData?.Team}  user={modalData?.user}/>
+      <TaskFormSingular Team={modalData?.Team}  task={modalData?.task}/>
 
 
 </Modal>
+<Modal
+              open={TaskFormVisible}
+              onCancel={() => {
+                setTaskFormVisible(false);
+              }}
+            >
+              <TaskForm />
+            </Modal>
  
     </div>
   );
