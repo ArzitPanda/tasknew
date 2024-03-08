@@ -24,14 +24,20 @@ const Dashboard = ({ children }) => {
 
 
 const context = useContext(AppContext)
-
+const [navigationKey,setNavigationKey] = useState("1"); 
   useEffect(() => {
     console.log("pathname is " + router.toLowerCase());
 
-    if (router.startsWith("/home/Team/")) {
+    if (router.startsWith("/home/Team")) {
+      setNavigationKey("1")
       setTaskVisible(true);
-    } else {
+    } else if(router.startsWith("/home/Profile")){
+      setNavigationKey("2")
       setTaskVisible(false);
+    }
+    else if(router.startsWith("/home/Task")){
+        setNavigationKey("4")
+
     }
   }, [router]);
 
@@ -51,12 +57,12 @@ const context = useContext(AppContext)
   const renderSidebarOrNavbar = () => {
     if (isMobile) {
       return (
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="horizontal">
+        <Menu theme="dark" defaultSelectedKeys={[navigationKey]} mode="horizontal">
         
-          <Menu.Item key="2" icon={<TeamOutlined />}>
+          <Menu.Item key="1" icon={<TeamOutlined />}>
             <Link href="/home/Team"> Teams</Link>
           </Menu.Item>
-          <Menu.Item key="3" icon={<UserOutlined />}>
+          <Menu.Item key="2" icon={<UserOutlined />}>
             <Link href="/home/Profile"> Profile</Link>
           </Menu.Item>
           {isTaskVisible && (
@@ -79,9 +85,9 @@ const context = useContext(AppContext)
       );
     } else {
       return (
-        <Sider collapsible>
+        <Sider collapsible  style={{backgroundColor:'white'}} >
           <div className="logo" />
-          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+          <Menu theme="light"  style={{backgroundColor:'white'}} selectedKeys={[navigationKey]} className="bg-white" mode="inline">
            
             <Menu.Item key="1" icon={<TeamOutlined />}>
               <Link href="/home/Team"> Teams</Link>

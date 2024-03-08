@@ -1,7 +1,8 @@
 "use client"
 import React, { useContext } from 'react';
-import { Avatar, Card, Divider, Tag } from 'antd';
+import { Avatar, Card, Divider, Tag, Tooltip } from 'antd';
 import { AppContext } from '@/app/layout';
+import { EditOutlined, LogoutOutlined } from '@ant-design/icons';
 
 const ProfilePage = () => {
   const contextData = useContext(AppContext);
@@ -9,7 +10,15 @@ const ProfilePage = () => {
 
   return (
     <div className="flex justify-center items-center h-auto lg:h-screen">
-      <Card className="w-full lg:w-3/4 lg:p-4">
+      <Card className="w-full h-full">
+        <div className='w-full h-32 flex items-start justify-end gap-x-6'>
+          <Tooltip title="edit">
+        <EditOutlined color='blue' style={{fontSize:30}}  className='cursor-pointer'/>
+        </Tooltip>
+        <Tooltip title="log out">
+        <LogoutOutlined color='blue' style={{fontSize:27}}   className='cursor-pointer'/>
+        </Tooltip>
+        </div>
         <div className="flex flex-col justify-center lg:justify-between items-center lg:flex-row">
           <div className="mb-4 lg:mb-0 lg:mr-4">
             <Avatar size={128} src="https://via.placeholder.com/150" />

@@ -126,7 +126,7 @@ fetchTeamMembers()
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-8 p-4 bg-gray-100 rounded-lg">
+    <div className="max-w-xl mx-auto mt-8 p-4  border-2 rounded-lg">
       <h2 className="text-lg font-bold mb-4">Add New Task</h2>
       <Input
         className="mb-4"

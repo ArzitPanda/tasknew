@@ -8,11 +8,13 @@ const TaskRouter = require("./Router/TaskRouter.js")
 const Dbconnection = require("./DbConnection/index.js")
 const UserRouter = require("./Router/UserRouter.js")
 const TeamRouter = require("./Router/TeamRouter.js")
+const {QueryRouter} = require('./Router/QueryRoute.js');
 const zoomRouter = require("./Router/ZoomRouter.js")
 const cors = require('cors')
 const specs = swaggerJsdoc(swaggerDef.swaggerOptions);
 const http = require('http');
 const socketIo = require('socket.io');
+
 
 
 const app = express();
@@ -67,7 +69,7 @@ io.on('connection', (socket) => {
 app.use("/task",TaskRouter(io))
 app.use("/user",UserRouter)
 app.use("/team",TeamRouter(io))
-
+app.use("/task",QueryRouter)
 app.use("/zoom",zoomRouter)
 
 app.post('/api/save-push-subscription', (req, res) => {
