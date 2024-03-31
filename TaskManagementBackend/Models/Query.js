@@ -18,6 +18,6 @@ const query = mongoose.Schema({
 },{timestamps:true})
 
 
+const model = mongoose.model('Query',query)
 
-
-module.exports = query
+module.exports = {model,query}

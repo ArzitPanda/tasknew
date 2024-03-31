@@ -1,32 +1,62 @@
 "use client"
-import React, { useContext } from 'react';
-import { Avatar, Card, Divider, Tag, Tooltip } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { Avatar, Button, Card, Divider, Tag, Tooltip,Typography } from 'antd';
 import { AppContext } from '@/app/layout';
 import { EditOutlined, LogoutOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import axios from 'axios';
+import { BASE_URL } from '@/app/Constant';
 
+const { Text } = Typography;
 const ProfilePage = () => {
   const contextData = useContext(AppContext);
   const user = contextData.user;
+  const router  = useRouter();
+const [userData,setUserData] = useState(null)
+
+
+  useEffect(()=>{
+   const fetchData=async() =>{
+
+
+    const response = await axios.get(BASE_URL+'/user/userdetails/'+user._id);
+    const userData = response.data;
+    setUserData(userData)
+   
+    console.log(response.data)
+
+
+   }
+   fetchData();
+
+  },[contextData])
 
   return (
     <div className="flex justify-center items-center h-auto lg:h-screen">
       <Card className="w-full h-full">
         <div className='w-full h-32 flex items-start justify-end gap-x-6'>
-          <Tooltip title="edit">
+          <Link href={"/home/Profile/editprofile"}>
+          <Tooltip title="edit" >
         <EditOutlined color='blue' style={{fontSize:30}}  className='cursor-pointer'/>
         </Tooltip>
+        </Link>
         <Tooltip title="log out">
         <LogoutOutlined color='blue' style={{fontSize:27}}   className='cursor-pointer'/>
         </Tooltip>
         </div>
         <div className="flex flex-col justify-center lg:justify-between items-center lg:flex-row">
           <div className="mb-4 lg:mb-0 lg:mr-4">
-            <Avatar size={128} src="https://via.placeholder.com/150" />
+            <Avatar size={128} 
+            style={{backgroundColor:"green"}}
+            src={userData?.profilePhoto ||`
+            https://api.dicebear.com/7.x/lorelei/svg?seed=${user?.name}` } />
           </div>
           <div className="text-center lg:text-left">
             <h2 className="text-2xl font-bold">{user?.name || "Arijit"}</h2>
             <p className="text-gray-600">{user?.email || "arzit.panda@gmail.com"}</p>
-            <p className="mt-2">Address: {user?.address || "Not provided"}</p>
+            <p className="mt-2">Address: {userData?.address?.
+      streetAddress || "Not provided"}</p>
             <p>Phone No: {user?.phone || "Not provided"}</p>
             {/* Add more details like social links if available */}
           </div>
@@ -44,13 +74,59 @@ const ProfilePage = () => {
           </div>
         </div>
         <Divider />
+        {userData && (
+  <div className="user-details bg-white shadow-md rounded-md p-4">
+    <h2>User Details</h2>
+    <div className="user-info mb-4">
+     
+      <p className="text-base text-gray-500">
+        Address: {userData.address.streetAddress}, {userData.address.city}, {userData.address.state} {userData.address.postalCode},{" "}
+        {userData.address.country}
+      </p>
+    </div>
+    <h2>Certifications</h2>
+    <ul className="flex flex-row">
+      {userData.certifications.map((certification, index) => (
+        <li key={index} className="bg-white shadow-lg rounded-xl mb-4 border-b  pb-2 py-6 px-6">
+          <p className="text-base font-medium text-gray-700">
+            <strong>{certification.name.toUpperCase()}</strong> 
+          </p>
+          <p className="text-base text-gray-500">
+            <strong>Issuer:</strong> {certification.issuer}
+          </p>
+          <p className="text-base text-gray-500">
+            <strong>Issued Date:</strong> {new Date(certification.issuedDate).toLocaleDateString()}
+          </p>
+          {certification.url && (
+            <p className="text-base text-gray-500">
+              <strong>URL:</strong>
+              <a
+                href={certification.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                {certification.url}
+              </a>
+            </p>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+      <Divider/>
         <div className="text-left">
-          <h3 className="text-lg font-bold">Tasks</h3>
-          <ul>
-            {user ? user?.Tasks.map(task => (
-              <li key={task._id}>{task.name}</li>
-            )) : <li>User not present</li>}
-          </ul>
+             <button className='bg-red-500 text-white rounded-md py-2 px-4 hover:bg-red-700 transition-colors' 
+             onClick={()=>{
+
+                localStorage.removeItem("userId");
+                localStorage.removeItem("token")
+                router.push("/login");
+
+
+
+             }}>Log Out</button>
         </div>
       </Card>
       

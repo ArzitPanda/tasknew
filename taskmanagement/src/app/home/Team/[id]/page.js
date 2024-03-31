@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   Button,
   Modal,
@@ -26,6 +26,7 @@ import { BASE_URL } from "@/app/Constant";
 import moment from "moment/moment";
 import TaskFormSingular from "@/app/Components/SingularTaskForm";
 import TaskForm from "@/app/Components/TaskForm";
+import Loading from "./loading";
 
 const TeamManagementComponent = ({ params }) => {
   function formatDate(dateString) {
@@ -239,8 +240,12 @@ const StatusColorizer =(val)=>{
     setModalVisible(false);
   };
 
+
+
+  
   return (
-    <div className="p-0">
+    <Suspense fallback={<Loading/>}>
+         <div className="p-0">
       {/* Add User Modal */}
       <Modal
         title="Add User to Team"
@@ -262,7 +267,7 @@ const StatusColorizer =(val)=>{
               onChange={handleUserSelectChange}
             >
               {searchResults.map((user) => (
-                <Option key={user._id} value={user._id}>
+                <Select.Option key={user._id} value={user._id}>
                   <Avatar
                     style={{ backgroundColor: "#87d068" }}
                     icon={<UserOutlined />}
@@ -271,7 +276,7 @@ const StatusColorizer =(val)=>{
                     {user.name.charAt(0).toUpperCase()}
                   </Avatar>
                   {user.name}
-                </Option>
+                </Select.Option>
               ))}
             </Select>
           </Form.Item>
@@ -336,7 +341,7 @@ const StatusColorizer =(val)=>{
 
       {/* Buttons for Actions */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg lg:text-2xl text-blue-500 font-bold">
+        <h2 className="text-lg lg:text-2xl text-blue-500 font-bold font-sans">
           Team Management
         </h2>
         {teamCreator?._id === context.user?._id && (
@@ -537,6 +542,8 @@ const StatusColorizer =(val)=>{
         <TaskForm />
       </Modal>
     </div>
+    </Suspense>
+ 
   );
 };
 

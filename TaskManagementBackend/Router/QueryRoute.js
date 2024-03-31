@@ -1,23 +1,35 @@
 const express = require("express");
 const QueryRouter = express.Router();
 const TaskQuery = require("../Models/TaskQuery");
-const Query = require("../Models/Query");
+const {model} = require("../Models/Query");
+const User = require("../Models/user.js");
 
-
+ module.exports =function(io)
+ {
   QueryRouter.post("/api/query", async (req, res) => {
     const { From, To, Task, question, Type } = req.body;
 
-    const query = new Query({ request: question, answer: [] });
+    const queries = new model({ request: question, answer: [] });
 
     const taskQuery = new TaskQuery({
       From: From,
       To: To,
       Task,
-      queries: [query],
+      queries: [queries],
       Type: Type,
     });
 
     const savedTaskQuery = await taskQuery.save();
+
+    const user = await User.findById(From)
+
+
+console.log({type:"Query",From:user?.name||user._doc.name,query:question})
+
+
+
+
+    io.to(To).emit("Notification",{type:"Query",From:user?.name||user._doc.name,query:question})
 
     res.send(savedTaskQuery);
   });
@@ -156,7 +168,10 @@ QueryRouter.get('/api/taskqueries', async (req, res) => {
         if (Task) filter.Task = Task;
 
         // Fetch TaskQuery documents based on the constructed filter
-        const taskQueries = await TaskQuery.find(filter).populate('From To Task queries');
+        const taskQueries = await TaskQuery.find(filter)
+        .populate('From', 'name') // Populate 'From' field with 'name' only
+        .populate('To', 'name')   // Populate 'To' field with 'name' only
+        .populate('Task', ' taskName');
 
         res.status(200).json(taskQueries);
     } catch (error) {
@@ -186,7 +201,9 @@ QueryRouter.get('/api/taskqueries/:id', async (req, res) => {
     }
 });
 
+return QueryRouter;
+ }
 
 
 
-module.exports = {QueryRouter}
+

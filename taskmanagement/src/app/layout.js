@@ -2,14 +2,19 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthenticationProvider from "@/app/AuthenticationProvider";
-import { createContext, useEffect, useState } from "react";
+import { Suspense, createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "./Constant";
 import { io } from "socket.io-client";
-import { Button, Card, Drawer, Space } from "antd";
+import { Button, Card, ConfigProvider, Drawer, Space, notification, theme, } from "antd";
 import  {useSwipeable}  from "react-swipeable"; 
+import Link from "next/link";
+import Loading from "./home/loading";
 const inter = Inter({ subsets: ["latin"] });
-
+import { Typography } from 'antd';
+import { SmileOutlined } from '@ant-design/icons';
+import { MdDarkMode, MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
+const { Title } = Typography;
 
 export const AppContext = createContext();
 export default function RootLayout({ children }) {
@@ -19,7 +24,15 @@ export default function RootLayout({ children }) {
     onSwiped: (eventData) => console.log("User Swiped!", eventData),
    
   });
-
+  const [api, contextHolder] = notification.useNotification();
+  const openNotification = (name,type) => {
+    api.info({
+      message: `Notification ${type}`,
+      description:
+        name,
+      placement:"topLeft",
+    });
+  };
 
 
 const [user,setUser] = useState();
@@ -133,9 +146,12 @@ useEffect(() => {
     // Handle the task assigned event
     console.log('New task assigned:', data);
       setNotifications([...notifications,{...data,seen:false}])
+      openNotification("check Notification","info")
     // Update tasks state with the new task
   
   });
+
+ 
 
   // Clean up socket connection when component unmounts
   return () => {
@@ -170,12 +186,32 @@ const onClose =()=>{
   setOpenDrawer(false)
 }
 
+const [darkMode,setDarkMode] = useState(true);
+
+
+
   return (
 
-    <html lang="en">
-      <AuthenticationProvider>
-     <AppContext.Provider  value ={{user,setUser,Tasks,SelectedTeam,setSelectedTeam,setOpenDrawer,notifications}} >
-     <body className={inter.className}>{children}</body>
+    <html lang="en" className="font-sans"> 
+  
+         <AuthenticationProvider>
+
+     <AppContext.Provider  value ={{user,setUser,Tasks,SelectedTeam,setSelectedTeam,setOpenDrawer,notifications,openNotification}} >
+      {contextHolder}
+     <body className={inter.className} >
+   
+<div className="bg-white h-10 w-full flex items-center justify-between py-5 fixed top-0 z-50 mb-16 border-b-[1px] border-gray-200">
+<h1 className="font-sans px-6 uppercase font-semibold text-slate-800">task management</h1>
+<div className="flex items-center justify-center gap-4 mx-12">
+<MdOutlineDarkMode />
+<MdOutlineLightMode />
+</div>
+    
+</div>
+<div className="mt-16">
+{children}
+</div>
+     </body>
      <Drawer
       title="Notifications"
       placement="right"
@@ -197,19 +233,38 @@ const onClose =()=>{
             className={`mb-4 ${notification.seen ? 'bg-gray-200' : 'bg-blue-200'}`}
             onClick={() => handleNotificationClick(notification)}
           >
-            {notification.type === 'Task' ? (
+            {notification.type === 'Task' && (
               <>
+              <Link href={"/home/Task"}>
                 <h4 className="font-semibold">New Task Assigned:</h4>
                 <p>{notification.data.taskName}</p>
                 <p>{notification.data.description}</p>
+                </Link>
               </>
-            ) : (
+            ) }
+            
+            {notification.type === 'Team' && (
               <>
-                <h4 className="font-semibold">You've been added to a new Team:</h4>
+             <Link href={"/home/Team"}>
+             
+             <h4 className="font-semibold">You've been added to a new Team:</h4>
                 <p>{notification.data.teamName}</p>
                 <p>{notification.data.description}</p>
+             </Link>
               </>
             )}
+              {notification.type === 'Query' && (
+              <>
+               <Link href={"/home/Query"}>
+               <h4 className="font-semibold">{notification?.From} asked you something</h4>
+                <p>{notification?.query}</p>
+                <p>{notification?.query}</p>
+               
+               </Link>
+              </>
+            )}
+
+
           </Card>
       
       ))}
@@ -218,6 +273,8 @@ const onClose =()=>{
 
      </AppContext.Provider >
      </AuthenticationProvider>
+  
+
     </html>
   );
 }

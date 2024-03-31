@@ -1,11 +1,12 @@
 "use client";
-import React, { useEffect, useState ,useContext} from "react";
+import React, { useEffect, useState ,useContext, Suspense} from "react";
 import { Layout, Menu, Modal } from "antd";
 import { AppContext } from "../layout";
 import {
   BookOutlined,
   DesktopOutlined,
   NotificationOutlined,
+  QuestionOutlined,
   TeamOutlined,
   UngroupOutlined,
   UserOutlined,
@@ -13,6 +14,8 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import TaskForm from "../Components/TaskForm";
+import Loading from "./loading";
+
 
 const { Sider, Content } = Layout;
 
@@ -38,6 +41,10 @@ const [navigationKey,setNavigationKey] = useState("1");
     else if(router.startsWith("/home/Task")){
         setNavigationKey("4")
 
+    }
+    else if(router.startsWith("/home/Query"))
+    {
+      setNavigationKey("5")
     }
   }, [router]);
 
@@ -85,9 +92,9 @@ const [navigationKey,setNavigationKey] = useState("1");
       );
     } else {
       return (
-        <Sider collapsible  style={{backgroundColor:'white'}} >
+        <Sider collapsible theme="light" >
           <div className="logo" />
-          <Menu theme="light"  style={{backgroundColor:'white'}} selectedKeys={[navigationKey]} className="bg-white" mode="inline">
+          <Menu   selectedKeys={[navigationKey]}  mode="inline">
            
             <Menu.Item key="1" icon={<TeamOutlined />}>
               <Link href="/home/Team"> Teams</Link>
@@ -115,6 +122,13 @@ const [navigationKey,setNavigationKey] = useState("1");
               >
                   <Link href="/home/Task"> Tasks</Link>
               </Menu.Item>
+              <Menu.Item
+                key="5"
+                icon={<QuestionOutlined />}
+              
+              >
+                  <Link href="/home/Query"> Query</Link>
+              </Menu.Item>
 
          
 
@@ -133,8 +147,10 @@ const [navigationKey,setNavigationKey] = useState("1");
             className="site-layout-background"
             style={{ padding: 24, minHeight: 360 }}
           >
+        <Suspense fallback={<Loading/>} >
            
             {children}
+            </Suspense>
           </div>
         </Content>
       </Layout>

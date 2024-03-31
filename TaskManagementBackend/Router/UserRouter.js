@@ -3,7 +3,12 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../Models/user.js");
+const multer = require('multer');
+const path = require('path');
 const UserTemp = require("../Models/TempUser.js");
+const { UserDetail } = require("../Models/userDetails.js");
+const cloudinary = require('cloudinary').v2;
+const { deleteResources } =require('cloudinary').v2
 
 // Route for user registration (signup)
 
@@ -118,4 +123,162 @@ router.get("/search", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+
+
+
+
+
+
+const upload = multer({
+  dest: 'uploads/', // Temporary folder for uploaded images (optional)
+  limits: { fileSize: 1000000 }, // Limit image size to 1 MB (adjust as needed)
+  fileFilter: (req, file, cb) => {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Unsupported file type. Only JPG, JPEG, and PNG files allowed.'));
+    }
+  }
+});
+cloudinary.config({
+  cloud_name: 'dtrp3lqrw',
+  api_key: '219944792718466',
+  api_secret: 'QLBubDThrlnBQLXSB_qwBcAw4N4',
+});
+
+
+router.post('/userdetails', upload.single('profilePhoto'), async (req, res) => {
+  try {
+    // Validate required fields
+    if (!req.body.userId) {
+      return res.status(400).json({ message: 'Missing required field: userId' });
+    }
+
+
+
+    console.log(req.body)
+    let photoUrl;
+    if (req.file) {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path,{ public_id: `profile/${req.body.userId}/${Date.now()}-${req.file.originalname}`}); // Upload image to Cloudinary
+      photoUrl = uploadResult.secure_url; // Use the secure URL from Cloudinary
+    }
+
+    const newDetail = new UserDetail({
+      user: req.body.userId,
+      profilePhoto: photoUrl,
+      address: req.body.address, // Optional address
+      certifications: req.body.certifications || [] // Optional certifications array
+    });
+
+    const savedDetail = await newDetail.save();
+    res.status(201).json(savedDetail); // Respond with the created user detail
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error creating user detail' });
+  }
+});
+
+
+
+function removeExtension(filename) {
+  // Check if the filename is a string
+  if (typeof filename !== 'string') {
+    throw new TypeError('Input must be a string');
+  }
+
+  // Find the last dot using lastIndexOf
+  const lastDotIndex = filename.lastIndexOf('.');
+
+  // If there's no dot, return the original filename
+  if (lastDotIndex === -1) {
+    return filename;
+  }
+
+  // Return the substring up to (but not including) the last dot
+  return filename.slice(0, lastDotIndex);
+}
+// **Update User Detail**
+router.put('/userdetails/',upload.single('profilePhoto'), async (req, res) => {
+
+
+
+  try {
+    // 1. Find the user detail to be updated
+    const existingDetail = await UserDetail.findOne({user:req.body.userId});
+    if (!existingDetail) {
+      return res.status(404).json({ message: 'User detail not found' });
+    }
+
+  
+  
+      // 2. Handle potential image deletion (if applicable)
+      let newProfilePhotoUrl;
+      if (req.file) {
+  
+        if (existingDetail.profilePhoto ) {
+          // Delete previous image only if URLs differ
+          // ... (Cloudinary or Firebase Storage deletion logic below)
+          const publicId = existingDetail.profilePhoto.split('/').pop();
+          const public = `profile/${existingDetail.user}/${removeExtension(publicId)}`
+          
+console.log(public)
+         await cloudinary.uploader
+          .destroy(public)
+          const uploadResult = await cloudinary.uploader.upload(req.file.path,{ public_id: `profile/${existingDetail.user}/${Date.now()}-${req.file.originalname}`}); // Upload image to Cloudinary
+          newProfilePhotoUrl = uploadResult.secure_url;
+
+
+        }
+      } else {
+        // No new image uploaded, use existing URL if present
+        newProfilePhotoUrl = existingDetail.profilePhoto;
+
+      }
+
+      const updatedDetail = await UserDetail.findOneAndUpdate({user:req.body.userId}, {
+      $set: {
+        user: req.body.userId || existingDetail.user,  // Update user ID if provided
+        profilePhoto: newProfilePhotoUrl,
+        address: req.body.address || existingDetail.address, // Update address if provided
+        certifications: req.body.certifications || existingDetail.certifications // Update certifications if provided
+      }
+    }, { new: true }); // Return the updated document
+        await existingDetail.save();
+        
+        // Return updated document
+  
+
+    res.json(updatedDetail);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating user detail' });
+  }
+});
+
+// **Get User Detail**
+router.get('/userdetails/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const userDetail = await UserDetail.findOne({user:id})// Populate the 'user' field (optional)
+    if (!userDetail) {
+      return res.status(404).json({ message: 'User detail not found' });
+    }
+
+    res.json(userDetail);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error getting user detail' });
+  }
+});
+
+
+
+
+
+
 module.exports = router;

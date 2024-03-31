@@ -17,7 +17,7 @@ const TaskQuerySchema  = mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Task',
     },
-    queries: [queryModel],
+    queries: [queryModel.query],
 
     Type:{
         type: String,

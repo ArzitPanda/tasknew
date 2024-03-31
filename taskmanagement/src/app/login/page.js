@@ -3,12 +3,13 @@ import { Checkbox, Form, Input ,Button} from 'antd';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useState ,useContext} from 'react'
+import { AppContext } from '../layout';
 
 const page = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+const {openNotification} =useContext(AppContext);
 
     const router = useRouter();
     // Handle form submission
@@ -37,8 +38,11 @@ const page = () => {
             router.push("/home");
         } catch (error) {
             // Handle error
-            console.error('Login failed:', error);
+            console.error('Login failed:', error?.response.data?.error);
+            openNotification(error?.response.data?.error || "error","error")
+         
             // You can display an error message to the user
+
         }
 
         // You can add your login logic here

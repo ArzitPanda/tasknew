@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Button, Input, Form, Modal, message, List, Card } from "antd";
 import { FilterOutlined, PlusOutlined, TeamOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { AppContext } from "@/app/layout";
 import { BASE_URL } from "@/app/Constant";
 import axios from "axios";
+import Loading from "./loading";
 
 const HomeTeamPage = () => {
   const [visible, setVisible] = useState(false);
@@ -67,6 +68,7 @@ const HomeTeamPage = () => {
   };
 
   return (
+    <Suspense fallback={<Loading/>}>
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl">Your Teams</h2>
@@ -138,6 +140,7 @@ const HomeTeamPage = () => {
         />
       </div>
     </div>
+    </Suspense>
   );
 };
 
