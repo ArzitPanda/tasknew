@@ -140,7 +140,7 @@ const StatusColorizer =(val)=>{
     const fetchTeamData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/team/team/get/${params.id}`
+          `${BASE_URL}/team/team/get/${params.id}`
         );
 
         setTeamData(response.data);

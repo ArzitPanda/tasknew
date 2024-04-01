@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState ,useContext} from 'react'
 import { AppContext } from '../layout';
+import { BASE_URL } from '../Constant';
 
 const page = () => {
     const [username, setUsername] = useState('');
@@ -18,7 +19,7 @@ const {openNotification} =useContext(AppContext);
         console.log('Form submitted:', { username, password });
 
         try {
-            const response = await axios.post('http://localhost:3001/user/login', {
+            const response = await axios.post(BASE_URL+'/user/login', {
                 email: username,
                 password: password
             });

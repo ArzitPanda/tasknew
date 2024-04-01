@@ -53,7 +53,7 @@ useEffect(() => {
 
       try {
         // Make the Axios request to the getUser endpoint
-        const response = await axios.get(`http://localhost:3001/user/getUser/${userId}`);
+        const response = await axios.get(`${BASE_URL}/user/getUser/${userId}`);
         console.log('User data:', response.data);
 
         setUser(response.data);
@@ -111,7 +111,7 @@ useEffect(() => {
 
 const [notifications,setNotifications]= useState([])
 
-const socket = io('http://localhost:3001');
+const socket = io(BASE_URL);
 
 
 const handleNotificationClick = (notification) => {

@@ -133,7 +133,7 @@ setFormData({
   const fetchTeamData = async (key) => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/team/team/get/${key}`
+        `${BASE_URL}/team/team/get/${key}`
       );
       console.log(response.data, "fetching tasks at query page");
       setTasks(
