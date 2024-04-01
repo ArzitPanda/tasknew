@@ -46,10 +46,10 @@ return (
           <Avatar size="2xl" bg="blue.500" source={{ uri: `https://api.dicebear.com/7.x/lorelei/png?seed=${user?.name}` }} />
         </Box>
         <Box flexDirection="row" space={2}>
-          <Button variant="unstyled" onPress={()=>{}}>
+          <Button variant="unstyled" onPress={()=>{navigation.navigate('Edit_Profile')}}>
             <Icon as={AntDesign} name="edit" size={5} color="black" />
           </Button>
-          <Button variant="unstyled" onPress={()=>{}}>
+          <Button variant="unstyled" onPress={()=>{navigation.navigate('Login')}}>
             <Icon as={AntDesign} name="logout" size={5} color="black" />
           </Button>
         </Box>
@@ -91,7 +91,7 @@ return (
         _pressed={{ bg: 'red.700' }}
         alignSelf="center"
         mt={4}
-        onPress={()=>{}}
+        onPress={()=>{navigation.navigate("Login")}}
       >
         Log Out
       </Button>

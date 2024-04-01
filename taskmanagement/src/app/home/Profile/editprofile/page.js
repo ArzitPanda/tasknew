@@ -80,7 +80,7 @@ const handleImage=(file)=>{
 
   
     
-    const data ={...values,profilePhoto:imgData}
+    const data ={...values,profilePhoto:imgData,userId:user._id}
     console.log(data);
     if(CurruserData)
     {
@@ -130,6 +130,7 @@ const handleImage=(file)=>{
       layout="vertical"
       className="space-y-6"
     >
+      
       <Form.Item
         label="Profile Photo"
         name="profilePhoto"

@@ -16,6 +16,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import TeamManagementComponent from "./Scrrens/TeamDetailsScreen";
 import UserScreen from "./Scrrens/UserScreen";
 import TaskForm from "./Scrrens/TaskAddScreen";
+import QueryScreen from "./Scrrens/QueryScreen";
+import ProfileStack from "./Scrrens/ProfileStack";
 const App = () => {
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
@@ -64,7 +66,7 @@ const App = () => {
       >
         <Tab.Screen
           name="Profile"
-          component={ProfileScreen}
+          component={ProfileStack}
           options={{ title: "Profile" }}
         />
         <Tab.Screen
@@ -76,6 +78,11 @@ const App = () => {
           name="Tasks"
           component={TaskScreen}
           options={{ title: "Tasks" }}
+        />
+         <Tab.Screen
+          name="Query"
+          component={QueryScreen}
+          options={{ title: "Query" ,headerShown:false}}
         />
       </Tab.Navigator>
     );

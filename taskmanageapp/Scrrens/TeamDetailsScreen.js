@@ -151,11 +151,13 @@ const navigation = useNavigation()
 
         const handleAddUser = async () => {
             try {
-              const response = await axios.post(BASE_URL + `/team/team/addMember`, {
-                teamId: teamData._id,
-                userId: selectedUserToAdd,
-                designation: handleDesignation,
-              });
+             
+                const response = await axios.post(
+                  BASE_URL + `/team/team/adduser/${route.params.id}`,
+                  { userId: selectedUserToAdd, designation: handleDesignation }
+                );
+                console.log(response.data);
+            
         
               setTeamMembers([...teamMembers, response.data.newMember]); // Update team members list
               setSelectedUserToAdd(''); // Clear selected user
@@ -167,10 +169,7 @@ const navigation = useNavigation()
               });
             } catch (error) {
               console.error('Error adding user to team:', error);
-              toast.show('Error adding user to team', {
-                placement: 'top',
-                status: 'error',
-              });
+             
             }
           };
           const handleRemoveUser = async (userId) => {
@@ -311,6 +310,13 @@ const navigation = useNavigation()
                   value={selectedUserToAdd}
                   marginTop={'1.5'}
                 />
+                <Select placeholder='add a designation' onValueChange={(value)=>{setHandleDesignation(value)}}>
+                <Select.Item label="Manager" value="MANAGER" />
+      <Select.Item label="Team Lead" value="TEAMLEAD" />
+      <Select.Item label="Developer" value="DEVELOPER" />
+      <Select.Item label="Tester" value="TESTER" />
+      <Select.Item label="Intern" value="INTERN" />
+                </Select>
               </Modal.Body>
               <Modal.Footer style={{display:"flex",alignItems:'center',flexDirection:"row",columnGap:10}}>
                 <Button variant="outline" onPress={() => setAddUserVisible(false)}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Layout, Button, Select, Drawer, Text, VStack, Box, View, Pressable, HStack, Divider } from 'native-base';
+import { Layout, Button, Select, Drawer, Text, VStack, Box, View, Pressable, HStack, Divider, ScrollView } from 'native-base';
 import axios from 'axios';
 import { AppContext } from '../Hooks/AppContext';
 import { BASE_URL } from '../Constant';
@@ -92,7 +92,7 @@ function TaskScreen() {
 
 
   return (
-    <Box>
+    <ScrollView>
       <VStack>
         {tasks.map((task) => (
           <Box
@@ -173,7 +173,7 @@ function TaskScreen() {
    
       </VStack>
     </Drawer>
-    </Box>
+    </ScrollView>
   );
 }
 
