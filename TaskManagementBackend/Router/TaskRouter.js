@@ -99,6 +99,7 @@ module.exports =function(io)
         io.to(userId).emit("Notification",{type:'Task',data:savedTask})
   
   const Teams = await Team.findById(team);
+  console.log(Teams)
       Teams.tasks.push(savedTask._id);
       userExists.Tasks.push(savedTask._id)
       await userExists.save()
@@ -143,7 +144,27 @@ module.exports =function(io)
     }
   });
   
-  
+  TaskRouter.post('/api/Task/status/:taskId', async (req, res) => {
+    const taskId = req.params.taskId;
+    const { status } = req.body;
+
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(
+            taskId,
+            { status },
+            { new: true }
+        );
+
+        if (!updatedTask) {
+            return res.status(404).json({ error: 'Task not found' });
+        }
+
+        res.status(200).json(updatedTask);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
   
   // Delete a task by ID
   
