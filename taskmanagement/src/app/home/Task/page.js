@@ -43,11 +43,23 @@ function TaskPage() {
   const context = useContext(AppContext);
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState({
-    assignedTo: context.user?._id, 
+    assignedTo: context.user?._id ,
     status: '',
     dueDateLTE: '',
     priority: ''
   });
+
+  useEffect(() => {
+    // Check if localStorage is available before accessing it
+  
+      const userId =  localStorage.getItem('userId');
+      console.log(userId,"i am in task screen")
+      setFilter(prevFilter => ({
+        ...prevFilter,
+        assignedTo: userId
+      }));
+    
+  }, [ ]);
 
   const [visible, setVisible] = useState(false);
   const [cellDetails, setCellDetails] = useState({});
@@ -68,7 +80,7 @@ function TaskPage() {
   const fetchTasks = async () => {
     try {
       const response = await axios.get(BASE_URL+'/task/api/Task', {
-        params: { ...filter ,assignedTo: context.user?._id},
+        params: { ...filter ,assignedTo: localStorage.getItem("userId")},
       });
       setTasks(response.data);
     } catch (error) {
@@ -79,16 +91,42 @@ function TaskPage() {
   const handleFilterChange = (key, value) => {
     setFilter(prevFilter => ({ ...prevFilter, [key]: value }));
   };
+  const [selectedStatus, setSelectedStatus] = useState(cellDetails.status);
+
+
+
 
 
   const handleChangeStatus = (value) => {
 
+    console.log(value)
     const updatedTask = { ...cellDetails, status: value };
     setCellDetails(updatedTask);
 
-
+    setSelectedStatus(value);
 
   };
+
+  const updateTaskStatus = async () => {
+    try {
+      const response = await axios.post(BASE_URL+`/task/api/Task/status/${cellDetails._id}`, {
+        status: selectedStatus
+      });
+      console.log(response.data); 
+     context.openNotification("Sucessfully Updated")
+     setVisible(false)
+      // Handle response data as needed
+      // If successful, you might want to close a modal or update UI accordingly
+    } catch (error) {
+      context.openNotification(error?.response.data?.error || "error","error")
+      console.error('Error updating task status:', error);
+      setVisible(false)
+      // Handle error state or display error message to user
+    }
+  };
+
+
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout className="site-layout flex flex-col-reverse lg:flex-row">
@@ -164,7 +202,7 @@ function TaskPage() {
 
 
           <div className='w-full mt-6 p-4 flex gap-x-4 items-end justify-end'>
-            <button className='bg-yellow-400 hover:bg-yellow-600 text-black px-4 py-2 rounded-md'>Update</button>
+            <button className='bg-yellow-400 hover:bg-yellow-600 text-black px-4 py-2 rounded-md' onClick={updateTaskStatus}>Update</button>
             <button className='bg-red-500 hover:bg-red-800 text-white px-4 py-2 rounded-md' onClick={()=>{setVisible(false)}}>Cancel</button>
 
           </div>

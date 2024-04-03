@@ -10,7 +10,7 @@ import { BASE_URL } from '../Constant';
 const page = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-const {openNotification} =useContext(AppContext);
+const {openNotification,setUser} =useContext(AppContext);
 
     const router = useRouter();
     // Handle form submission
@@ -28,15 +28,29 @@ const {openNotification} =useContext(AppContext);
             
             // Assuming the response contains the token and userId
             const { token, userId } = response.data;
+
+                if(userId)
+                {
+                    const userresponse = await axios.get(`${BASE_URL}/user/getUser/${userId}`);
+                   
+            
+                    setUser(userresponse.data);
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('userId', userId);
+                    
+                    // Do something after successful login, like redirecting to a dashboard page
+                    // Example: history.push('/dashboard');
+                    router.push("/home/Team");
+                }
+          
+
+
+
     
             // You can save the token and userId to local storage or state
             // For example, you can use localStorage:
-            localStorage.setItem('token', token);
-            localStorage.setItem('userId', userId);
-    
-            // Do something after successful login, like redirecting to a dashboard page
-            // Example: history.push('/dashboard');
-            router.push("/home");
+          
+
         } catch (error) {
             // Handle error
             console.error('Login failed:', error?.response.data?.error);

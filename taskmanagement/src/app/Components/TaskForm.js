@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const { Option } = Select;
 
-const TaskForm = () => {
+const TaskForm = ({data,Team,setTaskFormVisible}) => {
 
   const context = useContext(AppContext)
 
@@ -21,7 +21,7 @@ const TaskForm = () => {
   const [assignedBy, setAssignedBy] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [status, setStatus] = useState('');
-
+const [TeamData,setTeamData] =useState(null)
 
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -37,12 +37,14 @@ const [teamMembers,setTeamMembers] = useState([]);
 useEffect(()=>{
 const fetchTeamMembers =async ()=>{
 
-  if(team!=='')
-  {
-    const data = await axios.get(BASE_URL+"/team/team/get/"+team);
+  
+    const data = await axios.get(BASE_URL+"/team/team/get/"+Team);
     const TeamFetched = data.data;
+    console.log(data)
     setTeamMembers(TeamFetched.teamMembers)
-  }
+    setTeamData(data.data);
+    console.log("fetcheed")
+  
 
 
 
@@ -57,7 +59,7 @@ const fetchTeamMembers =async ()=>{
 fetchTeamMembers()
 
 
-},[team,setTeam])
+},[])
 
 
 
@@ -70,9 +72,7 @@ fetchTeamMembers()
 
 
 
-  const handleUserSelectChange = (value) => {
-    setSelectedUserToAdd(value);
-  };
+ 
 
   const handleSearch = async (value) => {
     try {
@@ -94,16 +94,16 @@ fetchTeamMembers()
     try {
       // Make the Axios POST request
       console.log(selectedUserToAdd)
-      const response = await axios.post(BASE_URL+`/task/api/Task/add-to-member/${selectedUserToAdd}`,  {
+      const response = await axios.post(BASE_URL+`/task/api/Task/add-to-member/${data._id}`,  {
         taskName,
         description,
         dueDate,
-        team,
+        team:Team,
         assignedBy:context?.user._id,
         
         status
       });
-      
+      context.openNotification("sucessfully added Task ")
 
 
 
@@ -117,8 +117,11 @@ fetchTeamMembers()
     } catch (error) {
       // Handle errors
       console.error('Error adding task to member:', error);
+      context.openNotification("Error adding task to member")
       throw error; // You can handle the error in the calling code
     }
+    setTaskFormVisible(false)
+
 
 
 
@@ -146,44 +149,20 @@ fetchTeamMembers()
         value={dueDate}
         onChange={(date) => setDueDate(date)}
       />
-      <Select
-        className="mb-4 w-full"
-        placeholder="Select Team"
-        value={team}
-        onChange={(value) => setTeam(value)}
-      >
-       {
-    context.user?.Teams.map((ele)=>{return(<Option key={ele._id} value={ele._id} >
-
-      {ele.teamName}
     
-    
-    </Option>)})
-       }
-        {/* Add more options as needed */}
-      </Select>
+    <Input  className="mb-4" value={TeamData?.teamName} contentEditable={false} /> 
       <div className='p-2 flex flex-col items-start gap-2'>
       <Tag color='blue'>assignedTo</Tag>
-      <Select
-            showSearch
-            placeholder="Search for user"
-            onSearch={handleSearch}
-            loading={loading}
-            filterOption={false}
-            className='mb-4 w-full'
-            onChange={handleUserSelectChange}
-          >
-            {teamMembers.map(user => (
-              <Option key={user._id} value={user._id}>
+    
+      <div className='flex items-center justify-between mx-4 p-2 bg-white'>
                 <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} size="small">
-                  {user.name.charAt(0).toUpperCase()}
+                  {data?.name.charAt(0).toUpperCase()}
                 </Avatar>
-                {user.name}
-              </Option>
-            ))}
-          </Select>
-      
+                {data?.name}
+              </div>
       </div>
+      
+    
      <Select
         className="mb-4 w-full"
         placeholder="Select Status"

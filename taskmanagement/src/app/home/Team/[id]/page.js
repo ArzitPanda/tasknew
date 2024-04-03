@@ -11,6 +11,7 @@ import {
   Avatar,
   Tag,
   Badge,
+  Table,
  
 } from "antd";
 import {
@@ -174,6 +175,7 @@ const StatusColorizer =(val)=>{
         { userId: selectedUserToAdd, designation: handleDesignation }
       );
       console.log(response.data);
+
     } catch (error) {
       console.log(error);
     }
@@ -182,11 +184,23 @@ const StatusColorizer =(val)=>{
     message.success("User added to team successfully");
   };
 
-  const handleUpdateTeamOk = () => {
-    // Handle form submission here
-    setUpdateTeamVisible(false);
-    message.success("Team updated successfully");
-  };
+
+  const [form] = Form.useForm();
+  const handleUpdateTeamOk = async () => {
+    try {
+      setLoading(true);
+      const values = await form.validateFields();
+      const response = await axios.put(BASE_URL+`/team/team/update/${params.id}`, values);
+      console.log(response.data); // Handle response data as needed
+      setLoading(false);
+      context.openNotification("sucessfully updated")
+      setUpdateTeamVisible(false);
+    } catch (error) {
+      console.error('Error updating team details:', error);
+      // Handle error state or display error message to user
+      setLoading(false);
+    }
+  }
 
   const handleDeleteTeamOk = ({ params }) => {
     // Handle form submission here
@@ -217,6 +231,7 @@ const StatusColorizer =(val)=>{
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState();
+  const [selectedTaskUser,setSelectedTaskUser]=useState(null)
 
   const handleItemClick = (item, type) => {
     // Logic to handle item click, for example, open modal
@@ -226,6 +241,8 @@ const StatusColorizer =(val)=>{
       setModalVisible(true);
     }
     if (type === "TEAM") {
+        setSelectedTaskUser(item)
+      console.log(item,"user here")
       setTaskFormVisible(true);
     }
   };
@@ -235,6 +252,10 @@ const StatusColorizer =(val)=>{
     setModalVisible(false);
   };
 
+
+
+
+
   const handleModalCancel = () => {
     // Logic to handle modal cancel
     setModalVisible(false);
@@ -242,6 +263,58 @@ const StatusColorizer =(val)=>{
 
 
 
+  const columns = [
+    {
+      title: 'Task Name',
+      dataIndex: 'taskName',
+      key: 'taskName',
+      width: '30%',
+      render: (text) => <span className="text-lg font-semibold">{text}</span>,
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      width: '30%',
+      render: (text) => <p className="text-gray-600">{text}</p>,
+    },
+    {
+      title: 'Due Date',
+      dataIndex: 'dueDate',
+      key: 'dueDate',
+      render: (date) => <span className="text-gray-600">{moment(date).format("MMMM Do, YYYY")}</span>,
+    },
+    {
+      title: 'Assigned To',
+      dataIndex: 'assignedToName',
+      key: 'assignedToName',
+      render: (assignedToName) => <Tag color="gold-inverse">{assignedToName}</Tag>,
+    },
+    {
+      title: 'Priority',
+      dataIndex: 'priority',
+      key: 'priority',
+      render: (priority) => <Tag color={PriorityColorizer(priority)}>{priority}</Tag>,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => <Tag color={StatusColorizer(status)}>{status}</Tag>,
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <Button
+          type="default"
+          shape="circle"
+          icon={<EditOutlined />}
+          onClick={() => handleItemClick(record, "TASK")}
+        />
+      ),
+    },
+  ];
   
   return (
     <Suspense fallback={<Loading/>}>
@@ -311,9 +384,9 @@ const StatusColorizer =(val)=>{
         title="Update Team Details"
         visible={updateTeamVisible}
         onOk={handleUpdateTeamOk}
-        onCancel={() => handleCancel(setUpdateTeamVisible)}
+        onCancel={() => {setUpdateTeamVisible(false)}}
       >
-        <Form name="update-team-form" initialValues={{ remember: true }}>
+        <Form form={form} name="update-team-form" initialValues={{ remember: true,isActive:true }}>
           <Form.Item
             name="teamName"
             rules={[{ required: true, message: "Please enter team name" }]}
@@ -334,7 +407,7 @@ const StatusColorizer =(val)=>{
         title="Confirm Delete Team"
         visible={deleteTeamVisible}
         onOk={handleDeleteTeamOk}
-        onCancel={() => handleCancel(setDeleteTeamVisible)}
+        onCancel={() =>{setDeleteTeamVisible(false)}}
       >
         <p>Are you sure you want to delete this team?</p>
       </Modal>
@@ -424,6 +497,7 @@ const StatusColorizer =(val)=>{
         </h3>
         <List
           bordered
+        style={{backgroundColor:'white'}}
           dataSource={teamMembers}
           renderItem={(item) => (
             <List.Item
@@ -476,51 +550,16 @@ const StatusColorizer =(val)=>{
         </div>
 
         {/* Tasks list using List.Item for clarity and visual grouping */}
-        <List
-          bordered
-          dataSource={tasks}
-          renderItem={(item) => (
-            <List.Item
-              key={item._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              {/* Task details */}
-              <div className="flex flex-col lg:flex-row justify-between items-center w-3/4">
-               <div className="w-9/12 grid grid-cols-12">
-               <h4 className="text-lg font-semibold  col-span-3">{item.taskName}</h4>
-                <p className="text-gray-600  col-span-6">{item.description}</p>
+       
+  <Table
+      columns={columns}
+      dataSource={tasks.reverse()}
+      bordered
+      pagination={true} // Disable pagination if you don't want it
+    />
 
-                {/* Formatted date and time using moment or similar library */}
-                <p className="text-gray-600 text-left col-span-3">
-                  Due Date: {moment(item.dueDate).format("MMMM Do, YYYY")}
-                </p>
-               </div>
 
-                {/* Tags for priority */}
-                <div className="flex mt-2">
-                  <Tag color="gold-inverse">{item.assignedToName}</Tag>
-                  <Tag color={PriorityColorizer(item.priority)}>{item.priority}</Tag>
-                  <div>
-                      <Tag color={StatusColorizer(item.status)}>{item.status}</Tag>
-                    </div>
-                  {/* Add more tags for other priorities */}
-                </div>
-              </div>
 
-              {/* Edit button */}
-              <Button
-                type="default"
-                shape="circle"
-                icon={<EditOutlined />}
-                onClick={() => handleItemClick(item, "TASK")}
-              />
-            </List.Item>
-          )}
-        />
       </div>
 
       <Modal
@@ -530,7 +569,7 @@ const StatusColorizer =(val)=>{
           setModalVisible(false);
         }}
       >
-        <TaskFormSingular Team={modalData?.Team} task={modalData?.task} />
+        <TaskFormSingular Team={modalData?.Team} task={modalData?.task} setModalVisibe={setModalVisible} />
       </Modal>
       <Modal
         open={TaskFormVisible}
@@ -539,7 +578,7 @@ const StatusColorizer =(val)=>{
         }}
         okType="text"
       >
-        <TaskForm />
+        <TaskForm data={selectedTaskUser} Team={params.id} setTaskFormVisible={setTaskFormVisible}/>
       </Modal>
     </div>
     </Suspense>
