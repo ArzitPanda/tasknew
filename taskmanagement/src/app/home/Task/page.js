@@ -6,6 +6,7 @@ import moment from 'moment';
 import { BASE_URL } from '@/app/Constant';
 import { AppContext } from '@/app/layout';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import useColor from '@/Hooks/useColor';
 
 const { Header, Content, Sider } = Layout;
 const { Option } = Select;
@@ -48,6 +49,9 @@ function TaskPage() {
     dueDateLTE: '',
     priority: ''
   });
+
+  const colors = useColor();
+const darkMode = colors.darkMode;
 
   useEffect(() => {
     // Check if localStorage is available before accessing it
@@ -139,27 +143,50 @@ function TaskPage() {
           </div>
         </Content>
       </Layout>
-      <Sider width={300} style={{ background: '#fff' }}>
-        <Menu mode="inline" defaultSelectedKeys={['1']}>
-          <Menu.Item key="1">Filters</Menu.Item>
-        </Menu>
-        <div style={{ padding: '1rem' }}>
-          <Select style={{ width: '100%', marginBottom: '1rem' }} placeholder="Status" value={filter.status} onChange={(value) => handleFilterChange('status', value)}>
-            <Option value="">All</Option>
-            <Option value="To Do">To Do</Option>
-            <Option value="In Progress">In Progress</Option>
-            <Option value="Completed">Completed</Option>
-          </Select>
-          <DatePicker style={{ width: '100%', marginBottom: '1rem' }} onChange={(date, dateString) => handleFilterChange('dueDateLTE', dateString)} />
-          <Select style={{ width: '100%', marginBottom: '1rem' }} placeholder="Priority" value={filter.priority} onChange={(value) => handleFilterChange('priority', value)}>
-            <Option value="">All</Option>
-            <Option value="Low">Low</Option>
-            <Option value="Medium">Medium</Option>
-            <Option value="High">High</Option>
-          </Select>
-          <Button type="primary" style={{ marginTop: '1rem', width: '100%' }} onClick={fetchTasks}>Apply Filters</Button>
-        </div>
-      </Sider>
+      <Sider width={300} style={{ background: darkMode ? '#1A202C' : '#fff' }}>
+      <Menu mode="inline" defaultSelectedKeys={['1']} style={{ background: darkMode ? '#1A202C' : '#fff' }}>
+        <Menu.Item key="1" style={{ color: colors.primaryText }}>Filters</Menu.Item>
+      </Menu>
+      <div style={{ padding: '1rem', color: colors.secondaryText }}>
+        <Select
+          style={{ width: '100%', marginBottom: '1rem' }}
+          placeholder="Status"
+          value={filter.status}
+          onChange={(value) => handleFilterChange('status', value)}
+          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+        >
+          <Option value="">All</Option>
+          <Option value="To Do">To Do</Option>
+          <Option value="In Progress">In Progress</Option>
+          <Option value="Completed">Completed</Option>
+        </Select>
+        <DatePicker
+          style={{ width: '100%', marginBottom: '1rem' }}
+          onChange={(date, dateString) => handleFilterChange('dueDateLTE', dateString)}
+          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+        />
+        <Select
+          style={{ width: '100%', marginBottom: '1rem' }}
+          placeholder="Priority"
+          value={filter.priority}
+          onChange={(value) => handleFilterChange('priority', value)}
+          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+        >
+          <Option value="">All</Option>
+          <Option value="Low">Low</Option>
+          <Option value="Medium">Medium</Option>
+          <Option value="High">High</Option>
+        </Select>
+        <Button
+          type="primary"
+          style={{ marginTop: '1rem', width: '100%' }}
+          onClick={fetchTasks}
+          className={darkMode ? 'bg-indigo-500 hover:bg-indigo-600' : ''}
+        >
+          Apply Filters
+        </Button>
+      </div>
+    </Sider>
       <Drawer
         title="Task Details"
         placement="bottom"

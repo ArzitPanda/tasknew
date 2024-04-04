@@ -14,7 +14,11 @@ const page = () => {
     const [password, setPassword] = useState('');
 const {openNotification,setUser} =useContext(AppContext);
 const  colors = useColor();
+
+console.log(colors)
+
     const router = useRouter();
+
     // Handle form submission
     const handleSubmit = async (e) => {
        
@@ -66,7 +70,7 @@ const  colors = useColor();
     };
 
     return (
-        <div className={`min-h-screen flex items-center justify-center ${colors?.SecondarybgColor} py-12 px-4 sm:px-6 lg:px-8`}>
+        <div className={`min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8 `+colors?.PrimarybgColor}>
             <div className="max-w-md w-full space-y-8">
                 <div>
                     <h2 className={`mt-6 text-center text-3xl font-extrabold ${colors?.primaryText}`}>
@@ -104,14 +108,16 @@ const  colors = useColor();
                     </Form.Item>
 
                     <Form.Item name="remember" valuePropName="checked">
-                        <Checkbox className="ml-2">Remember me</Checkbox>
+                        <Checkbox className={`ml-2 `}><div className={colors.primaryText}>Remember me</div></Checkbox>
                     </Form.Item>
 
                     <div>
                         <Button
-                            type="primary"
+                           
                             htmlType="submit"
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className='flex w-full'
+                           
+                            style={{ backgroundColor: colors.darkMode?'white':'#1890FF', color: colors.darkMode?'#1890FF':'white' }}
                         >
                             Sign in
                         </Button>
@@ -120,7 +126,7 @@ const  colors = useColor();
                 <div className="flex justify-center">
                     <p className="text-sm text-gray-600">
                         Not yet registered?{' '}
-                        <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+                        <Link href="/signup" className={"font-medium  hover:text-indigo-500"+colors.primaryText}>
                             Register here
                         </Link>
                     </p>

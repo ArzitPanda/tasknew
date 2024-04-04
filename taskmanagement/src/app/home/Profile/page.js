@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { BASE_URL } from '@/app/Constant';
+import useColor from '@/Hooks/useColor';
 
 const { Text } = Typography;
 const ProfilePage = () => {
@@ -14,7 +15,7 @@ const ProfilePage = () => {
   const user = contextData.user;
   const router  = useRouter();
 const [userData,setUserData] = useState(null)
-
+const colors =useColor()
 
   useEffect(()=>{
    const fetchData=async() =>{
@@ -75,45 +76,44 @@ const [userData,setUserData] = useState(null)
         </div>
         <Divider />
         {userData && (
-  <div className="user-details bg-white shadow-md rounded-md p-4">
-    <h2>User Details</h2>
-    <div className="user-info mb-4">
-     
-      <p className="text-base text-gray-500">
-        Address: {userData.address.streetAddress}, {userData.address.city}, {userData.address.state} {userData.address.postalCode},{" "}
-        {userData.address.country}
-      </p>
-    </div>
-    <h2>Certifications</h2>
-    <ul className="flex flex-row">
-      {userData.certifications.map((certification, index) => (
-        <li key={index} className="bg-white shadow-lg rounded-xl mb-4 border-b  pb-2 py-6 px-6">
-          <p className="text-base font-medium text-gray-700">
-            <strong>{certification.name.toUpperCase()}</strong> 
-          </p>
-          <p className="text-base text-gray-500">
-            <strong>Issuer:</strong> {certification.issuer}
-          </p>
-          <p className="text-base text-gray-500">
-            <strong>Issued Date:</strong> {new Date(certification.issuedDate).toLocaleDateString()}
-          </p>
-          {certification.url && (
-            <p className="text-base text-gray-500">
-              <strong>URL:</strong>
-              <a
-                href={certification.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                {certification.url}
-              </a>
-            </p>
-          )}
-        </li>
-      ))}
-    </ul>
+  <div className={`user-details ${colors.PrimarybgColor} shadow-md rounded-md p-4`}>
+  <h2 className={colors.primaryText}>User Details</h2>
+  <div className="user-info mb-4">
+    <p className={`text-base ${colors.secondaryText}`}>
+      Address: {userData.address.streetAddress}, {userData.address.city}, {userData.address.state} {userData.address.postalCode},{" "}
+      {userData.address.country}
+    </p>
   </div>
+  <h2 className={colors.primaryText}>Certifications</h2>
+  <ul className="flex flex-row">
+    {userData.certifications.map((certification, index) => (
+      <li key={index} className={`bg-white shadow-lg rounded-xl mb-4 border-b pb-2 py-6 px-6 ${colors.PrimarybgColor}`}>
+        <p className={`text-base font-medium ${colors.primaryText}`}>
+          <strong>{certification.name.toUpperCase()}</strong> 
+        </p>
+        <p className={`text-base ${colors.secondaryText}`}>
+          <strong>Issuer:</strong> {certification.issuer}
+        </p>
+        <p className={`text-base ${colors.secondaryText}`}>
+          <strong>Issued Date:</strong> {new Date(certification.issuedDate).toLocaleDateString()}
+        </p>
+        {certification.url && (
+          <p className={`text-base ${colors.secondaryText}`}>
+            <strong>URL:</strong>
+            <a
+              href={certification.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline"
+            >
+              {certification.url}
+            </a>
+          </p>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
 )}
       <Divider/>
         <div className="text-left">

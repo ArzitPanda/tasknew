@@ -7,6 +7,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { BASE_URL } from '@/app/Constant';
 import { AppContext } from '@/app/layout';
+import useColor from '@/Hooks/useColor';
 
 
 const UserDetailForm = ({ initialValues = {} }) => {
@@ -120,20 +121,23 @@ const handleImage=(file)=>{
     
   
   };
+  const colors = useColor();
 
   return (
-    <div className=" lg:w-full mx-auto px-4 py-8 bg-white shadow-md rounded-lg">
+    <div className={` lg:w-full mx-auto px-4 py-8 shadow-md rounded-lg ${colors.PrimarybgColor}`}>
         <h1 className='text-blue-500 text-2xl'>User Details</h1>
     <Form
       form={form}
       onFinish={handleSubmit}
       layout="vertical"
+      s
       className="space-y-6"
     >
       
       <Form.Item
         label="Profile Photo"
         name="profilePhoto"
+        
         className="mb-0 w-2/12 text-pretty"
         labelCol={{ style: { color: 'red' } }}
       >

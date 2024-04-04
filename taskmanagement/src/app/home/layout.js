@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState ,useContext, Suspense} from "react";
-import { Layout, Menu, Modal } from "antd";
+import { ConfigProvider, Layout, Menu, Modal, theme } from "antd";
 import { AppContext } from "../layout";
 import {
   BookOutlined,
@@ -15,6 +15,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import TaskForm from "../Components/TaskForm";
 import Loading from "./loading";
+import useColor from "@/Hooks/useColor";
 
 
 const { Sider, Content } = Layout;
@@ -27,6 +28,8 @@ const Dashboard = ({ children }) => {
 
 
 const context = useContext(AppContext)
+
+const colors = useColor();
 const [navigationKey,setNavigationKey] = useState("1"); 
   useEffect(() => {
     console.log("pathname is " + router.toLowerCase());
@@ -64,7 +67,7 @@ const [navigationKey,setNavigationKey] = useState("1");
   const renderSidebarOrNavbar = () => {
     if (isMobile) {
       return (
-        <Menu theme="dark" defaultSelectedKeys={[navigationKey]} mode="horizontal">
+        <Menu theme={colors.darkMode?'dark':'light'} defaultSelectedKeys={[navigationKey]} mode="horizontal">
         
           <Menu.Item key="1" icon={<TeamOutlined />}>
             <Link href="/home/Team"> Teams</Link>
@@ -139,7 +142,8 @@ const [navigationKey,setNavigationKey] = useState("1");
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <ConfigProvider theme={{algorithm:colors.darkMode?theme.darkAlgorithm:theme.defaultAlgorithm}}>
+    <Layout style={{ minHeight: "100vh",backgroundColor:colors.darkMode?'#151515':'white' }}>
       {renderSidebarOrNavbar()}
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }}>
@@ -155,6 +159,7 @@ const [navigationKey,setNavigationKey] = useState("1");
         </Content>
       </Layout>
     </Layout>
+    </ConfigProvider>
   );
 };
 

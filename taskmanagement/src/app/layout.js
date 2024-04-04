@@ -16,6 +16,7 @@ import { SmileOutlined } from '@ant-design/icons';
 import { MdDarkMode, MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
 import { ThemeProvider } from "./ThemeProvider";
 import Header from "./Components/Header";
+import useColor from "@/Hooks/useColor";
 const { Title } = Typography;
 
 export const AppContext = createContext();
@@ -79,6 +80,11 @@ useEffect(() => {
 
 
 const [subscription, setSubscription] = useState(null);
+
+
+
+
+
 
 useEffect(() => {
   // Check if the browser supports service workers and push notifications
@@ -191,11 +197,84 @@ const onClose =()=>{
 const [darkMode,setDarkMode] = useState(true);
 
 
+const DrawerComponent =()=>{
+const colors = useColor()
+
+
+  return( <Drawer
+    title={<div className={colors.secondary}>Notification</div>}
+    placement="right"
+    
+    width={500}
+   
+    onClose={onClose}
+    visible={openDrawer}
+    styles={{body:{backgroundColor:colors.darkMode?'#141414':'white',color:!colors.darkMode?'#141414':'white'}
+    ,header:{backgroundColor:colors.darkMode?'#151515':'white'},
+  footer:{backgroundColor:colors.darkMode?'#111111':'white'}
+  }}
+    
+    footer={
+      <div className={"flex justify-end "}>
+        <Button onClick={onClose} className="mr-2">
+          Close
+        </Button>
+      </div>
+    }
+  >
+    
+    {notifications.map((notification, index) => (
+    
+        <Card
+      
+          className={`mb-4 ${notification.seen ? 'bg-gray-200' : 'bg-blue-200'}`}
+          onClick={() => handleNotificationClick(notification)}
+        >
+          {notification.type === 'Task' && (
+            <>
+            <Link href={"/home/Task"}>
+              <h4 className="font-semibold">New Task Assigned:</h4>
+              <p>{notification.data.taskName}</p>
+              <p>{notification.data.description}</p>
+              </Link>
+            </>
+          ) }
+          
+          {notification.type === 'Team' && (
+            <>
+           <Link href={"/home/Team"}>
+           
+           <h4 className="font-semibold">You've been added to a new Team:</h4>
+              <p>{notification.data.teamName}</p>
+              <p>{notification.data.description}</p>
+           </Link>
+            </>
+          )}
+            {notification.type === 'Query' && (
+            <>
+             <Link href={"/home/Query"}>
+             <h4 className="font-semibold">{notification?.From} asked you something</h4>
+              <p>{notification?.query}</p>
+              <p>{notification?.query}</p>
+             
+             </Link>
+            </>
+          )}
+
+
+        </Card>
+    
+    ))}
+  </Drawer>)
+}
+
+
 
   return (
 
     <html lang="en" className="font-sans"> 
   <ThemeProvider>
+  
          <AuthenticationProvider>
 
      <AppContext.Provider  value ={{user,setUser,Tasks,SelectedTeam,setSelectedTeam,setOpenDrawer,notifications,openNotification}} >
@@ -203,71 +282,16 @@ const [darkMode,setDarkMode] = useState(true);
      <body className={inter.className} >
    <Header/>
 
-<div className="mt-16">
+<div >
 {children}
 </div>
      </body>
-     <Drawer
-      title="Notifications"
-      placement="right"
-      width={500}
-      onClose={onClose}
-      visible={openDrawer}
-      footer={
-        <div className="flex justify-end">
-          <Button onClick={onClose} className="mr-2">
-            Close
-          </Button>
-        </div>
-      }
-    >
-      {notifications.map((notification, index) => (
-      
-          <Card
-        
-            className={`mb-4 ${notification.seen ? 'bg-gray-200' : 'bg-blue-200'}`}
-            onClick={() => handleNotificationClick(notification)}
-          >
-            {notification.type === 'Task' && (
-              <>
-              <Link href={"/home/Task"}>
-                <h4 className="font-semibold">New Task Assigned:</h4>
-                <p>{notification.data.taskName}</p>
-                <p>{notification.data.description}</p>
-                </Link>
-              </>
-            ) }
-            
-            {notification.type === 'Team' && (
-              <>
-             <Link href={"/home/Team"}>
-             
-             <h4 className="font-semibold">You've been added to a new Team:</h4>
-                <p>{notification.data.teamName}</p>
-                <p>{notification.data.description}</p>
-             </Link>
-              </>
-            )}
-              {notification.type === 'Query' && (
-              <>
-               <Link href={"/home/Query"}>
-               <h4 className="font-semibold">{notification?.From} asked you something</h4>
-                <p>{notification?.query}</p>
-                <p>{notification?.query}</p>
-               
-               </Link>
-              </>
-            )}
-
-
-          </Card>
-      
-      ))}
-    </Drawer>
-
+    
+<DrawerComponent/>
 
      </AppContext.Provider >
      </AuthenticationProvider>
+  
      </ThemeProvider>
 
     </html>

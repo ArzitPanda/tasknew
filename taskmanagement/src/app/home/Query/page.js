@@ -1,4 +1,5 @@
 "use client";
+import useColor from "@/Hooks/useColor";
 import ToggleButton from "@/app/Components/ToggleButton";
 import { BASE_URL } from "@/app/Constant";
 import { AppContext } from "@/app/layout";
@@ -91,7 +92,7 @@ setFormData({
 
 
 
-
+const colors = useColor()
 
 
   
@@ -129,6 +130,8 @@ setFormData({
       throw error; // Throw the error to handle it in the calling code
     }
   };
+
+
 
   const fetchTeamData = async (key) => {
     try {
@@ -309,11 +312,12 @@ setFormData({
 
         <Input.TextArea
           showCount
-          className="col-span-10 rounded-xl"
+          styles={{textarea:{backgroundColor:colors.darkMode?'#141414':'white',color:colors.darkMode?'white':"black"},count:{color:colors.darkMode?'white':"black"}}}
+          className={"col-span-10 rounded-xl "}
           maxLength={100}
           onChange={(e) => handleChange({ target: { name: 'question', value: e.target.value } })}
         />
-        <div className="col-span-2 flex items-center justify-end mx-1">
+        <div className="col-span-10 flex items-center justify-start mx-1">
           <Button type="default" onClick={handleSubmit}>
             Submit
           </Button>

@@ -4,6 +4,8 @@ import { Form, Input, Button, DatePicker } from 'antd';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { BASE_URL } from '../Constant';
+import useColor from '@/Hooks/useColor';
+import Link from 'next/link';
 const Signup = () => {
     const [loading, setLoading] = useState(false);
 
@@ -11,6 +13,7 @@ const Signup = () => {
 
     
 const router = useRouter();
+const colors = useColor();
     const onFinish = async (values) => {
     
         console.log(values);
@@ -31,10 +34,10 @@ const router = useRouter();
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+        <div className={"min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8 "+colors.PrimarybgColor}>
         <div className="max-w-md w-full space-y-8">
             <div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                <h2 className={"mt-6 text-center text-3xl font-extrabold "+colors.secondaryText}>
                     Sign up for an account
                 </h2>
             </div>
@@ -48,13 +51,15 @@ const router = useRouter();
                     name="name"
                     rules={[{ required: true, message: 'Please enter your name' }]}
                 >
-                    <Input placeholder="Name" />
+                    <Input placeholder="Name"
+                    className={`placeholder-${colors.darkMode ? 'gray-400' : 'gray-600'} focus:placeholder-opacity-75`} 
+                    />
                 </Form.Item>
                 <Form.Item
                     name="email"
                     rules={[{ required: true, message: 'Please enter your email' }]}
                 >
-                    <Input type="email" placeholder="Email" />
+                    <Input type="email" placeholder="Email"  />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -73,12 +78,20 @@ const router = useRouter();
                         type="primary"
                         htmlType="submit"
                         loading={loading}
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium"
                     >
                         Sign up
                     </Button>
                 </Form.Item>
             </Form>
+            <div className="flex justify-center">
+                    <p className="text-sm text-gray-600">
+                        Already Have An Account?{' '}
+                        <Link href="/login" className={"font-medium  hover:text-indigo-500 "+colors.primaryText}>
+                            sign in here
+                        </Link>
+                    </p>
+                </div>
         </div>
     </div>
     );

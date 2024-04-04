@@ -28,6 +28,7 @@ import moment from "moment/moment";
 import TaskFormSingular from "@/app/Components/SingularTaskForm";
 import TaskForm from "@/app/Components/TaskForm";
 import Loading from "./loading";
+import useColor from "@/Hooks/useColor";
 
 const TeamManagementComponent = ({ params }) => {
   function formatDate(dateString) {
@@ -135,7 +136,7 @@ const StatusColorizer =(val)=>{
 }
 };
 
-
+const colors = useColor();
 
   useEffect(() => {
     const fetchTeamData = async () => {
@@ -414,12 +415,13 @@ const StatusColorizer =(val)=>{
 
       {/* Buttons for Actions */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg lg:text-2xl text-blue-500 font-bold font-sans">
+        <h2 className={`text-lg lg:text-2xl  font-bold font-sans ${colors.darkMode?'text-white':'text-blue-500'}`}>
           Team Management
         </h2>
         {teamCreator?._id === context.user?._id && (
           <Button
             type="dashed"
+            style={{backgroundColor:colors.darkMode?'#151515':"",color:colors.darkMode?'white':"#151515"}}
             icon={<TeamOutlined />}
             onClick={() => setAddUserVisible(true)}
           >
@@ -434,6 +436,7 @@ const StatusColorizer =(val)=>{
             <div className="hidden lg:flex items-center justify-center gap-x-4">
               <Button
                 color="blue"
+                style={{backgroundColor:colors.darkMode?'#151515':"",color:colors.darkMode?'white':"#151515"}}
                 icon={<EditOutlined />}
                 onClick={() => setUpdateTeamVisible(true)}
                 className="hidden lg:inline-block"
@@ -473,8 +476,8 @@ const StatusColorizer =(val)=>{
         )}
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h3 className="text-lg font-semibold mb-4 text-blue-500">
+      <div className= {`p-6 rounded-lg shadow-md mb-8 ${colors.darkMode?"bg-[#141414]":"bg-white"}`} >
+        <h3 className={"text-lg font-semibold mb-4 "+colors.primaryText}>
           Team Details
         </h3>
         <p className="text-gray-800 mb-2">
@@ -492,7 +495,7 @@ const StatusColorizer =(val)=>{
       </div>
 
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4  text-blue-500">
+        <h3 className={"text-lg font-semibold mb-4 "+colors.primaryText}>
           Team Members
         </h3>
         <List
@@ -503,21 +506,23 @@ const StatusColorizer =(val)=>{
             <List.Item
               actions={[
                 <Button
-                  type="default"
+                 
                   key="add-task"
                   size="small"
                   onClick={(e) => handleItemClick(item, "TEAM")}
+                  style={{backgroundColor:colors.darkMode?'#151515':"",color:colors.darkMode?'white':"#151515"}}
                 >
                   Add Task
                 </Button>,
               ]}
+              style={{backgroundColor:colors.darkMode?'#141414':"",color:colors.darkMode?'GrayText':"black",borderColor:colors.darkMode?'InactiveBorder':"ButtonShadow"}}
               className="cursor-pointer"
               onClick={(e) => handleItemClick(item, e)}
               key={item._id}
             >
               <div className="flex items-center">
                 <Avatar
-                  style={{ backgroundColor: "#87d068" }}
+                  style={{ backgroundColor: colors.darkMode?'cadetblue': "#87d068" }}
                   icon={<UserOutlined />}
                   size="small"
                 />
@@ -538,15 +543,16 @@ const StatusColorizer =(val)=>{
       <div className="mt-8">
         {/* List title with clear hierarchy */}
         <div className="w-full flex items-center justify-between px-4">
-          <h3 className="text-lg font-semibold mb-4 text-blue-500">Tasks</h3>
-          <button
-            className="text-white bg-blue-500 hover:text-black hover:bg-white px-4 py-2 rounded-md"
+          <h3 className={"text-lg font-semibold mb-4 "+colors.primaryText}>Tasks</h3>
+          <Button
+        
+            className={" px-4 py-2 rounded-md"}
             onClick={() => {
               setTaskFormVisible(!TaskFormVisible);
             }}
           >
             AddTask
-          </button>
+          </Button>
         </div>
 
         {/* Tasks list using List.Item for clarity and visual grouping */}
