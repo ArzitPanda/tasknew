@@ -138,7 +138,7 @@ const handleImage=(file)=>{
         label="Profile Photo"
         name="profilePhoto"
         
-        className="mb-0 w-2/12 text-pretty"
+        className="mb-0  w-4/12 lg:w-2/12 text-pretty"
         labelCol={{ style: { color: 'red' } }}
       >
         <Upload.Dragger onChange={handleImage} className="w-full">

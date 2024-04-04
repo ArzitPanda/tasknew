@@ -520,16 +520,16 @@ const colors = useColor();
               onClick={(e) => handleItemClick(item, e)}
               key={item._id}
             >
-              <div className="flex items-center">
+              <div className="flex items-center  sm:justify-start  gap-x-1">
                 <Avatar
                   style={{ backgroundColor: colors.darkMode?'cadetblue': "#87d068" }}
                   icon={<UserOutlined />}
                   size="small"
                 />
-                <div className="ml-4">
-                  <div className="flex items-center gap-x-2">
+                <div className="ml-0 lg:ml-4">
+                  <div className="flex items-center  gap-x-0 lg:gap-x-2">
                     <span className="font-semibold">{item.name}</span>
-                    <Tag color={DesignationColorizer(item.designation)}>{item.designation}</Tag>
+                    <Tag color={DesignationColorizer(item.designation)} >{item.designation}</Tag>
                   
                   </div>
                   <p className="text-gray-500">{item.email}</p>
@@ -545,7 +545,7 @@ const colors = useColor();
         <div className="w-full flex items-center justify-between px-4">
           <h3 className={"text-lg font-semibold mb-4 "+colors.primaryText}>Tasks</h3>
           <Button
-        
+
             className={" px-4 py-2 rounded-md"}
             onClick={() => {
               setTaskFormVisible(!TaskFormVisible);
@@ -557,12 +557,15 @@ const colors = useColor();
 
         {/* Tasks list using List.Item for clarity and visual grouping */}
        
-  <Table
-      columns={columns}
-      dataSource={tasks.reverse()}
-      bordered
-      pagination={true} // Disable pagination if you don't want it
-    />
+        <div className={"overflow-x-auto  lg:p-0 "+colors.PrimarybgColor}>
+      <Table
+        columns={columns}
+        dataSource={tasks.reverse()}
+        bordered
+        size="middle"
+        pagination={true} // Disable pagination
+      />
+    </div>
 
 
 

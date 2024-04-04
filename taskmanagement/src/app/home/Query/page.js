@@ -236,12 +236,14 @@ const colors = useColor()
 
   return (
     <div className="flex flex-col w-full" >
-      <div>
+      <div className="my-2"> 
        <ToggleButton onChange={setFilterBy}  />
        </div>
-      <Table dataSource={queries} columns={columns} onRow={(record) => ({
+    <div className={"overflow-x-auto "+colors.PrimarybgColor}>
+    <Table dataSource={queries} columns={columns} onRow={(record) => ({
         onClick: () => handleRowClick(record),
       })} />
+    </div>
 
 
       <FloatButton  icon={isInputVisible?<CloseOutlined color="blue"/>:<PlusOutlined color="blue"/>} onClick={()=>{setIsInputVisible(!isInputVisible)}}/>
@@ -254,7 +256,7 @@ const colors = useColor()
       height={500} // Adjust height as needed
     >
       <div className="grid grid-cols-12 gap-y-5 p-4">
-        <div className="col-span-2">
+        <div className="col-span-6 lg:col-span-2">
           <label className="block text-gray-600">Select Team:</label>
           <Select
             className="w-10/12"
@@ -270,7 +272,7 @@ const colors = useColor()
             ))}
           </Select>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-6 lg:col-span-2">
           <label className="block text-gray-600">Select Task:</label>
           <Select
             className="w-10/12"
@@ -283,7 +285,7 @@ const colors = useColor()
             ))}
           </Select>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-6 lg:col-span-2">
           <label className="block text-gray-600">Select Member:</label>
           <Select
             className="w-10/12"
@@ -296,7 +298,7 @@ const colors = useColor()
             ))}
           </Select>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-6 lg:col-span-2">
           <label className="block text-gray-600">Select Type:</label>
           <Select
             className="w-10/12"
@@ -313,7 +315,7 @@ const colors = useColor()
         <Input.TextArea
           showCount
           styles={{textarea:{backgroundColor:colors.darkMode?'#141414':'white',color:colors.darkMode?'white':"black"},count:{color:colors.darkMode?'white':"black"}}}
-          className={"col-span-10 rounded-xl "}
+          className={"col-span-12 lg:col-span-10 rounded-xl "}
           maxLength={100}
           onChange={(e) => handleChange({ target: { name: 'question', value: e.target.value } })}
         />
@@ -329,12 +331,12 @@ const colors = useColor()
         title={selectedQuery?.queries[0]?.request || "Query Details"}
         placement="top"
         closable={true}
-        height={800}
+        height={500}
      
         onClose={() => setDrawerVisible(false)}
         visible={drawerVisible}
       >
-        <div    className="flex flex-col items-left justify-between h-full">
+        <div    className={`flex flex-col items-left justify-between h-full ${colors.darkMode?"text-white":"text-black"}`}>
         <div>
           <p><strong>Request:</strong> {selectedQuery?.queries[0]?.request }</p>
           <p><strong>Answers:</strong></p>
@@ -348,7 +350,7 @@ const colors = useColor()
         <div>
 
 <Input placeholder="Type your answer..." value={queryAnswer} onChange={(e)=>{setQueryAnswer(e.target.value)}} />
-  <Button onClick={addAnswerToQuery}>Add Answer</Button>
+  <Button onClick={addAnswerToQuery} className="my-6">Add Answer</Button>
 </div>
         </div>
    

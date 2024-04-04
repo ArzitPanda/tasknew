@@ -69,7 +69,7 @@ const HomeTeamPage = () => {
 
   return (
     <Suspense fallback={<Loading/>}>
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full  lg:px-4 lg:py-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl">Your Teams</h2>
         <Button type="dashed" icon={<PlusOutlined />} onClick={showModal}>
@@ -129,8 +129,8 @@ const HomeTeamPage = () => {
                 }}
                 className="flex flex-col rounded-md shadow-md hover:shadow-xl transition-all duration-200"
               >
-                <p className="text-gray-700 px-4 pt-4">{item.description}</p>
-                <div className="flex items-center justify-between px-4 pb-4">
+                <p className="text-gray-700 text-xs lg:text-lg lg:px-4 lg:pt-4 py-2 font-semibold lg:py-0 lg:font-normal">{item.description}</p>
+                <div className="flex items-center justify-between lg:px-4 lg:pb-4">
                   <TeamOutlined className="text-blue-500" />
                   <p className="text-gray-500 font-sm ml-2">{formatDate(item.creationDate)}</p>
                 </div>

@@ -5,7 +5,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { BASE_URL } from '@/app/Constant';
 import { AppContext } from '@/app/layout';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined,FilterOutlined } from '@ant-design/icons';
 import useColor from '@/Hooks/useColor';
 
 const { Header, Content, Sider } = Layout;
@@ -81,15 +81,28 @@ const darkMode = colors.darkMode;
     fetchTasks();
   }, [filter]);
 
+
+
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const openDrawer = () => {
+    setDrawerVisible(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerVisible(false);
+  };
   const fetchTasks = async () => {
     try {
       const response = await axios.get(BASE_URL+'/task/api/Task', {
         params: { ...filter ,assignedTo: localStorage.getItem("userId")},
       });
       setTasks(response.data);
+      closeDrawer();
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
+    closeDrawer()
   };
 
   const handleFilterChange = (key, value) => {
@@ -134,16 +147,73 @@ const darkMode = colors.darkMode;
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout className="site-layout flex flex-col-reverse lg:flex-row">
-   
-        <Content style={{ margin: '0 16px' }}>
-          <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+     
+     
+      <Drawer
+        title="Filters"
+        placement="right"
+        width={300}
+        onClose={closeDrawer}
+        visible={drawerVisible}
+      >
+            <Menu mode="inline" defaultSelectedKeys={['1']} style={{ background: darkMode ? '#1A202C' : '#fff' }}>
+        <Menu.Item key="1" style={{ color: colors.primaryText }}>Filters</Menu.Item>
+      </Menu>
+      <div style={{ padding: '1rem', color: colors.secondaryText }}>
+        <Select
+          style={{ width: '100%', marginBottom: '1rem' }}
+          placeholder="Status"
+          value={filter.status}
+          onChange={(value) => handleFilterChange('status', value)}
+          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+        >
+          <Option value="">All</Option>
+          <Option value="To Do">To Do</Option>
+          <Option value="In Progress">In Progress</Option>
+          <Option value="Completed">Completed</Option>
+        </Select>
+        <DatePicker
+          style={{ width: '100%', marginBottom: '1rem' }}
+          onChange={(date, dateString) => handleFilterChange('dueDateLTE', dateString)}
+          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+        />
+        <Select
+          style={{ width: '100%', marginBottom: '1rem' }}
+          placeholder="Priority"
+          value={filter.priority}
+          onChange={(value) => handleFilterChange('priority', value)}
+          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+        >
+          <Option value="">All</Option>
+          <Option value="Low">Low</Option>
+          <Option value="Medium">Medium</Option>
+          <Option value="High">High</Option>
+        </Select>
+        <Button
+          type="primary"
+          style={{ marginTop: '1rem', width: '100%' }}
+          onClick={fetchTasks}
+          className={darkMode ? 'bg-indigo-500 hover:bg-indigo-600' : ''}
+        >
+          Apply Filters
+        </Button>
+      </div>
+        </Drawer>
+
+
+        <Content className='mx-0 lg:mx-10'>
+       <div className='w-full flex lg:hidden items-center justify-end p-2'>
+       <Button onClick={openDrawer} icon={<FilterOutlined color={colors.darkMode?'white':'black'} />} />
+       </div>
+          <div className={"site-layout-background  overflow-x-auto "+colors.PrimarybgColor}  style={{minHeight: 360 }}>
             <Table columns={columns} dataSource={tasks} rowKey="_id"   onRow={(record) => ({
         onClick: () => showDrawer(record),
       })}/>
           </div>
+          
         </Content>
-      </Layout>
-      <Sider width={300} style={{ background: darkMode ? '#1A202C' : '#fff' }}>
+        <div className='hidden lg:block  h-full '>
+      <Sider width={300} className='h-full min-h-[700px]' style={{ background: darkMode ? '#1A202C' : '#fff' }}>
       <Menu mode="inline" defaultSelectedKeys={['1']} style={{ background: darkMode ? '#1A202C' : '#fff' }}>
         <Menu.Item key="1" style={{ color: colors.primaryText }}>Filters</Menu.Item>
       </Menu>
@@ -187,6 +257,9 @@ const darkMode = colors.darkMode;
         </Button>
       </div>
     </Sider>
+      </div>
+      </Layout>
+     
       <Drawer
         title="Task Details"
         placement="bottom"
@@ -237,6 +310,7 @@ const darkMode = colors.darkMode;
 
        
       </Drawer>
+     
     </Layout>
   );
 }

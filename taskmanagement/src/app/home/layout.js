@@ -75,21 +75,22 @@ const [navigationKey,setNavigationKey] = useState("1");
           <Menu.Item key="2" icon={<UserOutlined />}>
             <Link href="/home/Profile"> Profile</Link>
           </Menu.Item>
-          {isTaskVisible && (
-            <Menu.Item
-              key="4"
-              icon={<BookOutlined />}
-              onClick={() => {
-                setTaskFormVisible(!TaskFormVisible);
-              }}
-            >
-              Task
-            </Menu.Item>
-          )}
 
-<Menu.Item key="1" icon={<DesktopOutlined />}>
-<Link href="/Teams"> Zoom</Link>
-          </Menu.Item>
+
+<Menu.Item
+                key="4"
+                icon={<BookOutlined />}
+              
+              >
+                  <Link href="/home/Task"> Tasks</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="5"
+                icon={<QuestionOutlined />}
+              
+              >
+                  <Link href="/home/Query"> Query</Link>
+              </Menu.Item>
         </Menu>
 
       );
@@ -146,7 +147,7 @@ const [navigationKey,setNavigationKey] = useState("1");
     <Layout style={{ minHeight: "100vh",backgroundColor:colors.darkMode?'#151515':'white' }}>
       {renderSidebarOrNavbar()}
       <Layout className="site-layout">
-        <Content style={{ margin: "0 16px" }}>
+        <Content className=" lg:mx-12">
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 360 }}

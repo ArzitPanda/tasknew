@@ -34,7 +34,7 @@ const colors =useColor()
   },[contextData])
 
   return (
-    <div className="flex justify-center items-center h-auto lg:h-screen">
+    <div className="flex justify-center w-full  items-center h-auto lg:h-screen">
       <Card className="w-full h-full">
         <div className='w-full h-32 flex items-start justify-end gap-x-6'>
           <Link href={"/home/Profile/editprofile"}>
@@ -68,7 +68,7 @@ const colors =useColor()
           <p>Date of Birth: {user?.DateOfBirth ? user.DateOfBirth.toDateString() : 'Not provided'}</p>
           <h4 className='text-xl'>Teams</h4>
        
-          <div>
+          <div className='flex flex-wrap gap-2'>
             {
               user?.Teams.map((ele) => (<Tag key={ele._id}>{ele.teamName}</Tag>))
             }
