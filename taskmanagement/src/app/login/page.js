@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import React, { useState ,useContext} from 'react'
 import { AppContext } from '../layout';
 import { BASE_URL } from '../Constant';
+import ThemeContext from '../ThemeProvider';
+import useColor from '@/Hooks/useColor';
 
 const page = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 const {openNotification,setUser} =useContext(AppContext);
-
+const  colors = useColor();
     const router = useRouter();
     // Handle form submission
     const handleSubmit = async (e) => {
@@ -64,10 +66,10 @@ const {openNotification,setUser} =useContext(AppContext);
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className={`min-h-screen flex items-center justify-center ${colors?.SecondarybgColor} py-12 px-4 sm:px-6 lg:px-8`}>
             <div className="max-w-md w-full space-y-8">
                 <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    <h2 className={`mt-6 text-center text-3xl font-extrabold ${colors?.primaryText}`}>
                         Sign in to your account
                     </h2>
                 </div>
