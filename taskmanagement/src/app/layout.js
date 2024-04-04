@@ -14,6 +14,8 @@ const inter = Inter({ subsets: ["latin"] });
 import { Typography } from 'antd';
 import { SmileOutlined } from '@ant-design/icons';
 import { MdDarkMode, MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
+import { ThemeProvider } from "./ThemeProvider";
+import Header from "./Components/Header";
 const { Title } = Typography;
 
 export const AppContext = createContext();
@@ -193,21 +195,14 @@ const [darkMode,setDarkMode] = useState(true);
   return (
 
     <html lang="en" className="font-sans"> 
-  
+  <ThemeProvider>
          <AuthenticationProvider>
 
      <AppContext.Provider  value ={{user,setUser,Tasks,SelectedTeam,setSelectedTeam,setOpenDrawer,notifications,openNotification}} >
       {contextHolder}
      <body className={inter.className} >
-   
-<div className="bg-white h-10 w-full flex items-center justify-between py-5 fixed top-0 z-50 mb-16 border-b-[1px] border-gray-200">
-<h1 className="font-sans px-6 uppercase font-semibold text-slate-800">task management</h1>
-<div className="flex items-center justify-center gap-4 mx-12">
-<MdOutlineDarkMode />
-<MdOutlineLightMode />
-</div>
-    
-</div>
+   <Header/>
+
 <div className="mt-16">
 {children}
 </div>
@@ -273,7 +268,7 @@ const [darkMode,setDarkMode] = useState(true);
 
      </AppContext.Provider >
      </AuthenticationProvider>
-  
+     </ThemeProvider>
 
     </html>
   );
