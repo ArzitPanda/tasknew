@@ -60,6 +60,11 @@ useEffect(() => {
         console.log('User data:', response.data);
 
         setUser(response.data);
+
+
+    
+
+        
         // Do something with the user data
       } catch (error) {
         console.error('Error getting user data:', error);

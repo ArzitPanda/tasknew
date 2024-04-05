@@ -4,14 +4,15 @@ import ToggleButton from "@/app/Components/ToggleButton";
 import { BASE_URL } from "@/app/Constant";
 import { AppContext } from "@/app/layout";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
-import { Avatar, Button, Drawer, FloatButton, Input, Select, Table, Tree } from "antd";
+import { Avatar, Button, Drawer, FloatButton, Input, Select, Skeleton, Table, Tree } from "antd";
 import axios from "axios";
+import Head from "next/head";
 
 import React, { useContext, useEffect, useState } from "react";
 
 const page = () => {
   const context = useContext(AppContext);
-
+const [loading,setLoading] =useState(false);
   const { user } = context;
   console.log(user,"here in query screen")
   const initialTeamData = user?.Teams.map((ele) => {
@@ -53,12 +54,15 @@ useEffect(() => {
 }, [filterBy]);
 const fetchQueries = async () => {
   try {
-    const queryParams = { ...(filterBy && { [filterBy]: user._id }) };
+    setLoading(true);
+    const queryParams = { ...(filterBy && { [filterBy]:   localStorage.getItem('userId') ||user._id  }) };
     const response = await axios.get(BASE_URL+'/query/api/taskqueries', { params: queryParams });
     setQueries(response.data);
+    setLoading(false)
     console.log(response.data)
   } catch (error) {
     console.error('Error fetching TaskQueries:', error);
+    setLoading(false)
   }
 };
 
@@ -236,14 +240,19 @@ const colors = useColor()
 
   return (
     <div className="flex flex-col w-full" >
+       <Head>
+        <title> Queries You have</title>
+      </Head>
       <div className="my-2"> 
        <ToggleButton onChange={setFilterBy}  />
        </div>
-    <div className={"overflow-x-auto "+colors.PrimarybgColor}>
-    <Table dataSource={queries} columns={columns} onRow={(record) => ({
-        onClick: () => handleRowClick(record),
-      })} />
-    </div>
+    {
+      loading ? (<><Skeleton active /><Skeleton active rootClassName="mt-2" /></> ) : (<div className={"overflow-x-auto "+colors.PrimarybgColor}>
+      <Table dataSource={queries} columns={columns} onRow={(record) => ({
+          onClick: () => handleRowClick(record),
+        })} />
+      </div>)
+    }
 
 
       <FloatButton  icon={isInputVisible?<CloseOutlined color="blue"/>:<PlusOutlined color="blue"/>} onClick={()=>{setIsInputVisible(!isInputVisible)}}/>

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import Image from 'next/image'
+import Head from 'next/head';
 const Signup = () => {
     const [loading, setLoading] = useState(false);
 
@@ -38,6 +39,9 @@ const colors = useColor();
 
     return (
         <div className={"min-h-screen flex items-center justify-center flex-col  py-12 px-4 sm:px-6 lg:px-8 "+colors.PrimarybgColor}>
+             <Head>
+        <title> Create An Account </title>
+      </Head>
 <div className='block'>
 <Image
       src="/brand_with_logo.png"

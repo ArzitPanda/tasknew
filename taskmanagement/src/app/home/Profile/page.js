@@ -8,6 +8,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { BASE_URL } from '@/app/Constant';
 import useColor from '@/Hooks/useColor';
+import Head from 'next/head';
 
 const { Text } = Typography;
 const ProfilePage = () => {
@@ -34,7 +35,10 @@ const colors =useColor()
   },[contextData])
 
   return (
-    <div className="flex justify-center w-full  items-center h-auto lg:h-screen">
+    <div className="flex justify-center w-full  items-center h-auto ">
+       <Head>
+        <title>Your Profile</title>
+      </Head>
       <Card className="w-full h-full">
         <div className='w-full h-32 flex items-start justify-end gap-x-6'>
           <Link href={"/home/Profile/editprofile"}>
@@ -85,9 +89,9 @@ const colors =useColor()
     </p>
   </div>
   <h2 className={`${colors.primaryText} my-2 font-sans`}>Certifications</h2>
-  <ul className="flex  flex-col gap-1 lg:flex-row">
+  <ul className="flex  flex-col gap-2 lg:flex-row">
     {userData.certifications.map((certification, index) => (
-      <li key={index} className={`shadow-md rounded-xl mb-4 ${colors.darkMode?'shadow-gray-700':'shadow-gray-300'} pb-2 py-6 px-6 ${colors.PrimarybgColor}`}>
+      <li key={index} className={`shadow-sm rounded-xl mb-4 ${colors.darkMode?'shadow-gray-700':'shadow-gray-200'} pb-2 py-6 px-6 ${colors.PrimarybgColor}`}>
         <img src='/cert.png' className='w-full h-16 object-contain'/>
         <p className={`text-base font-medium ${colors.primaryText}`}>
           <strong>{certification.name.toUpperCase()}</strong> 

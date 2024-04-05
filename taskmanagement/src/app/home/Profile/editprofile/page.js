@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { BASE_URL } from '@/app/Constant';
 import { AppContext } from '@/app/layout';
 import useColor from '@/Hooks/useColor';
+import Head from 'next/head';
 
 
 const UserDetailForm = ({ initialValues = {} }) => {
@@ -125,6 +126,9 @@ const handleImage=(file)=>{
 
   return (
     <div className={` lg:w-full mx-auto px-4 py-8 shadow-md rounded-lg ${colors.PrimarybgColor}`}>
+       <Head>
+        <title>Edit Your Profile</title>
+      </Head>
         <h1 className='text-blue-500 text-2xl'>User Details</h1>
     <Form
       form={form}

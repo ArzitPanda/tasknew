@@ -8,6 +8,7 @@ import { AppContext } from "@/app/layout";
 import { BASE_URL } from "@/app/Constant";
 import axios from "axios";
 import Loading from "./loading";
+import Head from "next/head";
 
 const HomeTeamPage = () => {
   const [visible, setVisible] = useState(false);
@@ -69,6 +70,9 @@ const HomeTeamPage = () => {
 
   return (
     <Suspense fallback={<Loading/>}>
+        <Head>
+        <title> Taskify Team</title>
+      </Head>
     <div className="w-full  lg:px-4 lg:py-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl">Your Teams</h2>

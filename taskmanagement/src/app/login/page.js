@@ -11,6 +11,7 @@ import useColor from '@/Hooks/useColor';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import Image from 'next/image'
+import Head from 'next/head';
 const page = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -75,7 +76,9 @@ console.log(colors)
 
     return (
         <div className={`min-h-screen flex items-center justify-center flex-col  py-12 px-4 sm:px-6 lg:px-8 `+colors?.PrimarybgColor}>
-
+  <Head>
+        <title> Login to Taskifyer</title>
+      </Head>
 <div className='block'>
 <Image
       src="/logo.png"

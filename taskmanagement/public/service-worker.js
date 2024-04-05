@@ -1,11 +1,16 @@
+const { notification } = require("antd");
+const { REACT_LOADABLE_MANIFEST } = require("next/dist/shared/lib/constants");
+
 self.addEventListener('push', function(event) {
-    console.log('Push received', event);
-  
-    const title = 'Your Title';
+    console.log('Push received', event?.data.json());
+    const data =event?.data.json()
+    console.log("data is "+event?.data.json())
+    const title = data.title;
     const options = {
-      body: "hello",
-      icon: 'path_to_your_icon.png',
-      badge: 'path_to_your_badge.png'
+      body: data.body,
+      icon: './logo.png',
+      badge: 'path_to_your_badge.png',
+      data:data
     };
   
   
@@ -13,4 +18,31 @@ self.addEventListener('push', function(event) {
       self.registration.showNotification(title, options)
    
   });
-  
+  const BASE_URL="https://tasknew.onrender.com"
+  self.addEventListener('notificationclick', function(event) {
+    const clickedNotificationData = event.notification.data; // Retrieve data from the clicked notification
+    event.notification.close();
+    console.log(clickedNotificationData)
+    event.waitUntil(
+      clients.openWindow(BASE_URL)// Use the data passed in the notification to redirect
+    );
+});
+
+
+
+const openLink=(data)=>{
+    if(data?.type==='QUERY')
+    {
+      return BASE_URL+'Query'
+    }
+    else if(data?.type==='TEAM')
+    {
+      return BASE_URL+'Team/'+data?.id
+    }
+    else
+    {
+      return BASE_URL+'Task'
+    }
+
+
+}

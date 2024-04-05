@@ -7,6 +7,7 @@ import { BASE_URL } from '@/app/Constant';
 import { AppContext } from '@/app/layout';
 import { CheckCircleOutlined, CloseCircleOutlined,FilterOutlined } from '@ant-design/icons';
 import useColor from '@/Hooks/useColor';
+import Head from 'next/head';
 
 const { Header, Content, Sider } = Layout;
 const { Option } = Select;
@@ -146,6 +147,9 @@ const darkMode = colors.darkMode;
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
+       <Head>
+        <title> Your Tasks</title>
+      </Head>
       <Layout className="site-layout flex flex-col-reverse lg:flex-row">
      
      

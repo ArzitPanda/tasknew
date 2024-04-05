@@ -29,6 +29,7 @@ import TaskFormSingular from "@/app/Components/SingularTaskForm";
 import TaskForm from "@/app/Components/TaskForm";
 import Loading from "./loading";
 import useColor from "@/Hooks/useColor";
+import Head from "next/head";
 
 const TeamManagementComponent = ({ params }) => {
   function formatDate(dateString) {
@@ -303,22 +304,31 @@ const colors = useColor();
       key: 'status',
       render: (status) => <Tag color={StatusColorizer(status)}>{status}</Tag>,
     },
-    {
+   {
       title: 'Action',
       key: 'action',
+      hidden:teamCreator?._id === context.user?._id ?false:true ,
+    
       render: (text, record) => (
-        <Button
-          type="default"
-          shape="circle"
-          icon={<EditOutlined />}
-          onClick={() => handleItemClick(record, "TASK")}
-        />
+     <>
+     {teamCreator?._id === context.user?._id
+     &&
+     (  <Button
+      type="default"
+      shape="circle"
+      icon={<EditOutlined />}
+      onClick={() => handleItemClick(record, "TASK")}
+    />)}
+     </>
       ),
     },
   ];
   
   return (
     <Suspense fallback={<Loading/>}>
+         <Head>
+        <title> {teamData?.teamName}</title>
+      </Head>
          <div className="p-0">
       {/* Add User Modal */}
       <Modal
@@ -480,16 +490,16 @@ const colors = useColor();
         <h3 className={"text-lg font-semibold mb-4 "+colors.primaryText}>
           Team Details
         </h3>
-        <p className="text-gray-800 mb-2">
-          <span className="font-bold text-black">Name:</span>{" "}
+        <p className={"mb-2 "+colors.secondaryText}>
+          <span className={`font-bold ${colors.primaryText}`}>Name:</span>{" "}
           {teamData?.teamName}
         </p>
-        <p className="text-gray-800 mb-2">
-          <span className="font-bold text-black">Description:</span>{" "}
+        <p className={"mb-2 "+colors.secondaryText}>
+          <span className={`font-bold ${colors.primaryText}`}>Description:</span>{" "}
           {teamData?.description}
         </p>
-        <p className="text-gray-800 mb-2">
-          <span className="font-bold text-black">Date Created:</span>{" "}
+        <p className={"mb-2 "+colors.secondaryText}>
+          <span className={`font-bold ${colors.primaryText}`}>Date Created:</span>{" "}
           {formatDate(teamData?.creationDate)}
         </p>
       </div>
@@ -505,15 +515,17 @@ const colors = useColor();
           renderItem={(item) => (
             <List.Item
               actions={[
-                <Button
+              <div>
+                {teamCreator?._id === context.user?._id && (  <Button
                  
-                  key="add-task"
-                  size="small"
-                  onClick={(e) => handleItemClick(item, "TEAM")}
-                  style={{backgroundColor:colors.darkMode?'#151515':"",color:colors.darkMode?'white':"#151515"}}
-                >
-                  Add Task
-                </Button>,
+                 key="add-task"
+                 size="small"
+                 onClick={(e) => handleItemClick(item, "TEAM")}
+                 style={{backgroundColor:colors.darkMode?'#151515':"",color:colors.darkMode?'white':"#151515"}}
+               >
+                 Add Task
+               </Button>)}
+              </div>,
               ]}
               style={{backgroundColor:colors.darkMode?'#141414':"",color:colors.darkMode?'GrayText':"black",borderColor:colors.darkMode?'InactiveBorder':"ButtonShadow"}}
               className="cursor-pointer"
@@ -544,15 +556,15 @@ const colors = useColor();
         {/* List title with clear hierarchy */}
         <div className="w-full flex items-center justify-between px-4">
           <h3 className={"text-lg font-semibold mb-4 "+colors.primaryText}>Tasks</h3>
-          <Button
+          {teamCreator?._id === context.user?._id && ( <Button
 
-            className={" px-4 py-2 rounded-md"}
-            onClick={() => {
-              setTaskFormVisible(!TaskFormVisible);
-            }}
-          >
-            AddTask
-          </Button>
+className={" px-4 py-2 rounded-md"}
+onClick={() => {
+  setTaskFormVisible(!TaskFormVisible);
+}}
+>
+AddTask
+</Button>)}
         </div>
 
         {/* Tasks list using List.Item for clarity and visual grouping */}
