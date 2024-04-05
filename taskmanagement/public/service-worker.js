@@ -1,5 +1,3 @@
-const { notification } = require("antd");
-const { REACT_LOADABLE_MANIFEST } = require("next/dist/shared/lib/constants");
 
 self.addEventListener('push', function(event) {
     console.log('Push received', event?.data.json());
