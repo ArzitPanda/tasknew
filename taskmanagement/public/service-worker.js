@@ -16,13 +16,13 @@ self.addEventListener('push', function(event) {
       self.registration.showNotification(title, options)
    
   });
-  const BASE_URL="https://tasknew.onrender.com"
+  const BASE_URL="https://taskifyer.vercel.app"
   self.addEventListener('notificationclick', function(event) {
     const clickedNotificationData = event.notification.data; // Retrieve data from the clicked notification
     event.notification.close();
     console.log(clickedNotificationData)
     event.waitUntil(
-      clients.openWindow(BASE_URL)// Use the data passed in the notification to redirect
+      clients.openWindow(openLink(clickedNotificationData))// Use the data passed in the notification to redirect
     );
 });
 
