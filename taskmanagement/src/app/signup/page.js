@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { Form, Input, Button, DatePicker } from 'antd';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { BASE_URL } from '../Constant';
+import { BASE_URL, LOGO_URL } from '../Constant';
 import useColor from '@/Hooks/useColor';
 import Link from 'next/link';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
+import Image from 'next/image'
 const Signup = () => {
     const [loading, setLoading] = useState(false);
 
@@ -34,10 +37,21 @@ const colors = useColor();
     };
 
     return (
-        <div className={"min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8 "+colors.PrimarybgColor}>
+        <div className={"min-h-screen flex items-center justify-center flex-col  py-12 px-4 sm:px-6 lg:px-8 "+colors.PrimarybgColor}>
+<div className='block'>
+<Image
+      src="/brand_with_logo.png"
+      className={` ${colors.darkMode?'filter invert-0':'invert'}`}
+      width={250}
+      height={`100`}
+      alt="Picture of the author"
+    />
+</div>
+
         <div className="max-w-md w-full space-y-8">
+       
             <div>
-                <h2 className={"mt-6 text-center text-3xl font-extrabold "+colors.secondaryText}>
+                <h2 className={"mt-6 text-center  text-xl lg:text-3xl font-extrabold font-sans "+colors.primaryText}>
                     Sign up for an account
                 </h2>
             </div>
@@ -75,10 +89,10 @@ const colors = useColor();
                 </Form.Item>
                 <Form.Item>
                     <Button
-                        type="primary"
+                        type="default"
                         htmlType="submit"
                         loading={loading}
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium"
+                        className={"w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium "+colors.primaryText}
                     >
                         Sign up
                     </Button>
@@ -92,6 +106,10 @@ const colors = useColor();
                         </Link>
                     </p>
                 </div>
+
+                {loading && (  <div className='w-full flex items-center justify-center'>
+               <Spin indicator={<LoadingOutlined style={{ fontSize: 30 }} spin={true} />} />
+               </div>)}
         </div>
     </div>
     );

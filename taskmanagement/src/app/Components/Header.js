@@ -3,6 +3,8 @@ import ThemeContext from '../ThemeProvider'; // Adjust the path as per your proj
 import { Badge, Button, Switch } from 'antd';
 import { MdNotifications, MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { AppContext } from '../layout';
+import Image from 'next/image'
+import BrandPng from "../../../public/BRAND.png"
 
 const Header = () => {
   const { darkMode, toggleTheme } = useContext(ThemeContext);
@@ -21,7 +23,14 @@ const Header = () => {
   };
   return (
     <div className={`${darkMode ? 'bg-[#141414]' : 'bg-white'} h-14 w-full flex items-center justify-between py-5 top-0 z-50  border-b-[1px] border-gray-200`}>
-      <h1 className={`font-sans px-6 uppercase font-semibold ${darkMode ? 'text-white' : 'text-slate-800'}`}>task management</h1>
+     
+     <Image
+      src="/brand_with_logo.png"
+      className={`ml-6 ${darkMode?'filter invert-0':'invert'}`}
+      width={150}
+      height={`100`}
+      alt="Picture of the author"
+    />
       <div className="flex items-center justify-center gap-2 mx-2">
         <Switch
         style={{backgroundColor:'gray',caretColor:'blue'}}

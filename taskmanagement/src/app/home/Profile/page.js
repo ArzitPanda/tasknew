@@ -84,10 +84,11 @@ const colors =useColor()
       {userData.address.country}
     </p>
   </div>
-  <h2 className={colors.primaryText}>Certifications</h2>
-  <ul className="flex flex-row">
+  <h2 className={`${colors.primaryText} my-2 font-sans`}>Certifications</h2>
+  <ul className="flex  flex-col gap-1 lg:flex-row">
     {userData.certifications.map((certification, index) => (
-      <li key={index} className={`bg-white shadow-lg rounded-xl mb-4 border-b pb-2 py-6 px-6 ${colors.PrimarybgColor}`}>
+      <li key={index} className={`shadow-md rounded-xl mb-4 ${colors.darkMode?'shadow-gray-700':'shadow-gray-300'} pb-2 py-6 px-6 ${colors.PrimarybgColor}`}>
+        <img src='/cert.png' className='w-full h-16 object-contain'/>
         <p className={`text-base font-medium ${colors.primaryText}`}>
           <strong>{certification.name.toUpperCase()}</strong> 
         </p>

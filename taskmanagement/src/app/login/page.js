@@ -8,13 +8,15 @@ import { AppContext } from '../layout';
 import { BASE_URL } from '../Constant';
 import ThemeContext from '../ThemeProvider';
 import useColor from '@/Hooks/useColor';
-
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
+import Image from 'next/image'
 const page = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 const {openNotification,setUser} =useContext(AppContext);
 const  colors = useColor();
-
+const [loading,setLoading] =useState(false);
 console.log(colors)
 
     const router = useRouter();
@@ -23,7 +25,7 @@ console.log(colors)
     const handleSubmit = async (e) => {
        
         console.log('Form submitted:', { username, password });
-
+        setLoading(true);
         try {
             const response = await axios.post(BASE_URL+'/user/login', {
                 email: username,
@@ -46,6 +48,7 @@ console.log(colors)
                     
                     // Do something after successful login, like redirecting to a dashboard page
                     // Example: history.push('/dashboard');
+                    setLoading(false);
                     router.push("/home/Team");
                 }
           
@@ -60,8 +63,9 @@ console.log(colors)
         } catch (error) {
             // Handle error
             console.error('Login failed:', error?.response.data?.error);
+            setLoading(false);
             openNotification(error?.response.data?.error || "error","error")
-         
+          
             // You can display an error message to the user
 
         }
@@ -70,7 +74,17 @@ console.log(colors)
     };
 
     return (
-        <div className={`min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8 `+colors?.PrimarybgColor}>
+        <div className={`min-h-screen flex items-center justify-center flex-col  py-12 px-4 sm:px-6 lg:px-8 `+colors?.PrimarybgColor}>
+
+<div className='block'>
+<Image
+      src="/logo.png"
+      className={` ${colors.darkMode?'filter invert':'invert-0'}`}
+      width={50}
+      height={`50`}
+      alt="Picture of the logo"
+    />
+</div>
             <div className="max-w-md w-full space-y-8">
                 <div>
                     <h2 className={`mt-6 text-center text-3xl font-extrabold ${colors?.primaryText}`}>
@@ -131,6 +145,10 @@ console.log(colors)
                         </Link>
                     </p>
                 </div>
+             
+                {loading && (  <div className='w-full flex items-center justify-center'>
+               <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin={true} />} />
+               </div>)}
             </div>
           
         </div>
