@@ -156,7 +156,7 @@ const darkMode = colors.darkMode;
         onClose={closeDrawer}
         visible={drawerVisible}
       >
-            <Menu mode="inline" defaultSelectedKeys={['1']} style={{ background: darkMode ? '#1A202C' : '#fff' }}>
+            <Menu mode="inline" defaultSelectedKeys={['1']} style={{ background: darkMode ? '#141414' : '#fff' }}>
         <Menu.Item key="1" style={{ color: colors.primaryText }}>Filters</Menu.Item>
       </Menu>
       <div style={{ padding: '1rem', color: colors.secondaryText }}>
@@ -165,7 +165,7 @@ const darkMode = colors.darkMode;
           placeholder="Status"
           value={filter.status}
           onChange={(value) => handleFilterChange('status', value)}
-          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+          dropdownStyle={{ background: darkMode ? '#141414' : '#fff' }}
         >
           <Option value="">All</Option>
           <Option value="To Do">To Do</Option>
@@ -213,9 +213,9 @@ const darkMode = colors.darkMode;
           
         </Content>
         <div className='hidden lg:block  h-full '>
-      <Sider width={300} className='h-full min-h-[700px]' style={{ background: darkMode ? '#1A202C' : '#fff' }}>
-      <Menu mode="inline" defaultSelectedKeys={['1']} style={{ background: darkMode ? '#1A202C' : '#fff' }}>
-        <Menu.Item key="1" style={{ color: colors.primaryText }}>Filters</Menu.Item>
+      <Sider width={300} className='h-full min-h-[700px]' style={{ background: darkMode ? '#141414' : '#fff' }}>
+      <Menu mode="inline" defaultSelectedKeys={['1']} style={{ background: darkMode ? '#141414' : '#fff' }}>
+        <Menu.Item key="1" style={{ color: colors.primaryText,backgroundColor: darkMode ? '#1D1D1D' : '#fff'}}>Filters</Menu.Item>
       </Menu>
       <div style={{ padding: '1rem', color: colors.secondaryText }}>
         <Select
@@ -223,7 +223,7 @@ const darkMode = colors.darkMode;
           placeholder="Status"
           value={filter.status}
           onChange={(value) => handleFilterChange('status', value)}
-          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+          dropdownStyle={{ background: darkMode ? '#141414' : '#fff' }}
         >
           <Option value="">All</Option>
           <Option value="To Do">To Do</Option>
@@ -233,14 +233,14 @@ const darkMode = colors.darkMode;
         <DatePicker
           style={{ width: '100%', marginBottom: '1rem' }}
           onChange={(date, dateString) => handleFilterChange('dueDateLTE', dateString)}
-          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+          dropdownStyle={{ background: darkMode ? '#141414' : '#fff' }}
         />
         <Select
           style={{ width: '100%', marginBottom: '1rem' }}
           placeholder="Priority"
           value={filter.priority}
           onChange={(value) => handleFilterChange('priority', value)}
-          dropdownStyle={{ background: darkMode ? '#1A202C' : '#fff' }}
+          dropdownStyle={{ background:darkMode ? '#141414' : '#fff' }}
         >
           <Option value="">All</Option>
           <Option value="Low">Low</Option>
@@ -251,7 +251,7 @@ const darkMode = colors.darkMode;
           type="primary"
           style={{ marginTop: '1rem', width: '100%' }}
           onClick={fetchTasks}
-          className={darkMode ? 'bg-indigo-500 hover:bg-indigo-600' : ''}
+          className={darkMode ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-blue-500 hover:bg-blue-600'}
         >
           Apply Filters
         </Button>
@@ -267,47 +267,44 @@ const darkMode = colors.darkMode;
         onClose={onClose}
         visible={visible}
         style={{ textAlign: 'right' }}
-        height={800} // Adjust height as needed
+        height={500} // Adjust height as needed
       >
         {/* Render cell details inside the Drawer */}
-        <div className="p-4 flex flex-wrap text-lg items-center w-full">
        
-          <div className="w-full flex bg-slate-200 mb-4 p-4 rounded-md gap-x-6">
-            <p className="text-blue-500 font-semibold  h-full ">Task Name:</p>
-            <p className='font-semibold'>{cellDetails.taskName}</p>
-          </div>
-          <div className="w-full flex bg-blue-200 mb-4 p-4 rounded-md gap-x-6">
-            <p className="text-blue-500 font-semibold">Description:</p>
-            <p className='font-semibold'>{cellDetails.description}</p>
-          </div>
-          <div className="w-full flex bg-slate-200 mb-4 p-4 rounded-md gap-x-6">
-            <p className="text-blue-500 font-semibold">Due Date:</p>
-            <p className='font-semibold'>{cellDetails.dueDate}</p>
-          </div>
-          <div className="w-full flex bg-blue-200 mb-4 p-4 rounded-md gap-x-6">
-            <p className="text-blue-500 font-semibold">Priority:</p>
-            <p className='font-semibold'>{cellDetails.priority}</p>
-          </div>
-          <div className="w-full flex bg-slate-200 mb-4 p-4 rounded-md gap-x-6">
-            <p className="text-blue-500 font-semibold">Status:</p>
-            <Select
-              defaultValue={cellDetails.status}
-              onChange={handleChangeStatus}
-              className="ml-2"
-            >
-              <Option value="Completed">Completed</Option>
-              <Option value="In Progress">In Progress</Option>
-            </Select>
-          </div>
-
-
-          <div className='w-full mt-6 p-4 flex gap-x-4 items-end justify-end'>
-            <button className='bg-yellow-400 hover:bg-yellow-600 text-black px-4 py-2 rounded-md' onClick={updateTaskStatus}>Update</button>
-            <button className='bg-red-500 hover:bg-red-800 text-white px-4 py-2 rounded-md' onClick={()=>{setVisible(false)}}>Cancel</button>
-
-          </div>
+        <div className="p-4 flex flex-wrap text-lg items-center w-full font-sans">
+        <div className="w-full flex mb-1 p-2 rounded-md gap-x-6">
+          <p className="text-blue-500 font-semibold  h-full ">Task Name:</p>
+          <p className={`font-medium ${colors.primaryText}`}>{cellDetails.taskName}</p>
+        </div>
+        <div className="w-full flex mb-1 p-2 rounded-md gap-x-6">
+          <p className="text-blue-500 font-semibold">Description:</p>
+          <p className={`font-medium ${colors.primaryText}`}>{cellDetails.description}</p>
+        </div>
+        <div className="w-full flex mb-1 p-2 rounded-md gap-x-6">
+          <p className="text-blue-500 font-semibold">Due Date:</p>
+          <p className={`font-medium ${colors.primaryText}`}>{cellDetails.dueDate}</p>
+        </div>
+        <div className="w-full flex mb-1 p-2 rounded-md gap-x-6">
+          <p className="text-blue-500 font-semibold">Priority:</p>
+          <p className={`font-medium ${colors.primaryText}`}>{cellDetails.priority}</p>
+        </div>
+        <div className="w-full flex mb-1 p-2 rounded-md gap-x-6">
+          <p className="text-blue-500 font-semibold">Status:</p>
+          <Select
+            value={selectedStatus}
+            onChange={handleChangeStatus}
+            className="ml-2 w-32"
+          >
+            <Option value="Completed">Completed</Option>
+            <Option value="In Progress">In Progress</Option>
+          </Select>
         </div>
 
+        <div className='w-full mt-6 p-4 flex gap-x-4 items-end justify-end'>
+          <button className='bg-yellow-400 hover:bg-yellow-600 text-black px-4 py-2 rounded-md' onClick={updateTaskStatus}>Update</button>
+          <button className='bg-red-500 hover:bg-red-800 text-white px-4 py-2 rounded-md' onClick={() => { onClose() }}>Cancel</button>
+        </div>
+      </div>
        
       </Drawer>
      
