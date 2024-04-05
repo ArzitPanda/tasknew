@@ -3,7 +3,7 @@ const router = express.Router();
 const { Team } = require("../Models/team.js");
 const User = require("../Models/user.js");
 const Designation = require("../Models/Designation.js");
-
+const webpush = require('../webpush.js')
 // Route for creating a new team
 /**
  * @swagger
@@ -146,6 +146,23 @@ module.exports = function (io) {
       const newDesignation = await designations.save();
 
       io.to(userId).emit("Notification", { type: "Team", data: team });
+      
+      
+      const payload = JSON.stringify({
+        title: 'Added To new Team',
+        body: `You have been assigned to ${team?.teamName} as a ${designation}`,
+        type:`TEAM`,
+        id:teamId,
+        // You can add more data if needed
+    });
+      
+
+
+
+
+
+
+    webpush.sendNotification(user?.pushSubscription||user._doc?.pushSubscription,payload).then(res=>{res}).catch(err=>{console.log(err)})
       res.status(200).json(updatedTeam);
     } catch (error) {
       console.error(error);

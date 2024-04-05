@@ -3,7 +3,7 @@ const QueryRouter = express.Router();
 const TaskQuery = require("../Models/TaskQuery");
 const {model} = require("../Models/Query");
 const User = require("../Models/user.js");
-
+const webpush = require('../webpush.js')
  module.exports =function(io)
  {
   QueryRouter.post("/api/query", async (req, res) => {
@@ -23,13 +23,33 @@ const User = require("../Models/user.js");
 
     const user = await User.findById(From)
 
+    const userTo = await User.findById(To);
+
 
 console.log({type:"Query",From:user?.name||user._doc.name,query:question})
 
 
 
 
-    io.to(To).emit("Notification",{type:"Query",From:user?.name||user._doc.name,query:question})
+    io.to(To).emit("Notification",{type:"Query",From:user?.name||user._doc.name,query:question});
+
+
+    
+      
+    const payload = JSON.stringify({
+      title: 'New Query For You',
+      body: `Query by ${user.name}`,
+      type:`QUERY`
+      // You can add more data if needed
+  });
+    
+
+
+
+
+
+
+  webpush.sendNotification(userTo?.pushSubscription||userTo._doc?.pushSubscription,payload).then(res=>{res}).catch(err=>{console.log(err)})
 
     res.send(savedTaskQuery);
   });

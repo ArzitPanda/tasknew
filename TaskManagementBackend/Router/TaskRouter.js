@@ -110,10 +110,22 @@ module.exports =function(io)
       const payload = JSON.stringify({
         title: 'New Task Assigned',
         body: `You have been assigned a new task: ${taskName}`,
+        type:`TASK`
         // You can add more data if needed
     });
+      
+console.log(userExists)
+
+
+
+
+
+    webpush.sendNotification(userExists?.pushSubscription||userExists._doc?.pushSubscription,payload).then(res=>{res}).catch(err=>{console.log(err)})
 
   console.log(payload)
+
+
+
       res.status(201).json(savedTask);
     } catch (error) {
       console.error(error);
