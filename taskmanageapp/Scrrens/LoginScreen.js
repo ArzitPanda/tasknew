@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import { Button, Input, Checkbox, HStack, VStack, Link} from 'native-base';
+import { Button, Input, Checkbox, HStack, VStack, Link, useColorModeValue} from 'native-base';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { AppContext } from '../Hooks/AppContext';
@@ -117,13 +117,15 @@ const LoginPage = () => {
         // You can add your login logic here
     };
 
+    const text = useColorModeValue("gray.400", "Dark");
+    const bg = useColorModeValue("warmGray.50", "coolGray.800");
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <VStack
         flex={1}
         alignItems="center"
         justifyContent="center"
-        bg="gray.50"
+        bg={bg}
         p={4}
         space={4}
     >
@@ -152,7 +154,7 @@ const LoginPage = () => {
                 Sign in
             </Button>
             <HStack justifyContent="center">
-                <Text fontSize="sm" color="gray.600">
+                <Text fontSize="sm" color={text}>
                     Not yet registered?{' '}
                     <Text  color="indigo.600" onPress={()=>{navigation.navigate('SignUp')}}>
                         Register here

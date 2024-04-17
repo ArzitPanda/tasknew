@@ -1,12 +1,15 @@
-import { Avatar, Box, Button,Center,Progress, Card, Divider, HStack, NativeBaseProvider, ScrollView, Tag,Text, View ,Bu, Icon,FlatList, Spinner} from 'native-base';
+import { Avatar, Box, Button,Center,Progress, Card, Divider, HStack, NativeBaseProvider, ScrollView, Tag,Text, View ,Bu, Icon,FlatList, Spinner, VStack, Stack, List, Image, useColorModeValue} from 'native-base';
 import { AntDesign,MaterialCommunityIcons} from '@expo/vector-icons';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../Hooks/AppContext';
 import   {useNavigation} from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { BASE_URL } from '../Constant';
+import { Linking, SafeAreaView, TouchableOpacity } from 'react-native';
+import axios from 'axios';
+import { Asset, useAssets } from 'expo-asset';
 const ProfileScreen = () => {
-
+  const [assets, error] = useAssets([require('../assets/cert.png'), require('../assets/favicon.png')]);
     // const user ={
     //     name: "John Doe",
     //     email: "john.doe@example.com",
@@ -26,11 +29,34 @@ const ProfileScreen = () => {
   const loading = contextData.loading;
 const navigation = useNavigation()
 
+const [userData,setUserData] = useState(null)
+const bg = useColorModeValue("white", "coolGray.800");
+const bgNav = useColorModeValue("white", "black");
+const icon = useColorModeValue('black','white')
+  useEffect(()=>{
+   const fetchData=async() =>{
 
 
+ try {
+  const userId =await AsyncStorage.getItem("userId")
+  const response = await axios.get(BASE_URL+'/user/userdetails/'+userId);
+  const userData = response.data;
+  setUserData(userData)
+ 
+  console.log(response.data)
+ } catch (error) {
+  console.log(error)
+ }
 
+
+   }
+   fetchData();
+
+  },[user])
+
+const tagcolor = useColorModeValue("blue.100","blueGray.900")
 const renderItem = ({ item: team }) => (
-  <Box key={team._id} bg="blue.100" p={2} rounded="md" mr={2}>
+  <Box key={team._id} bg={tagcolor} p={2} rounded="md" mr={2}>
     <Text>{team.teamName}</Text>
   </Box>
 );
@@ -40,21 +66,41 @@ return (
 
 <Spinner color="indigo.500" size={'lg'}/>
 </Center>) : (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
+
+<SafeAreaView style={{ flex: 1, backgroundColor: bg }}>
+<View style={{  borderBottomWidth: 1, borderBottomColor: '#ccc' }} backgroundColor={bgNav}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10, height: 60 }}>
+       {
+        !user && (   <TouchableOpacity onPress={() => navigation.goBack()} >
+        <AntDesign name="arrowleft" size={24} color="black" />
+      </TouchableOpacity>)
+       }
+   
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Profile</Text>
+       
+          <Box flexDirection="row" space={2}>
+          <Button variant="unstyled" onPress={()=>{navigation.navigate('EditProfile')}}>
+            <Icon as={AntDesign} name="edit" size={5} color={icon} />
+          </Button>
+          
+        </Box>
+        
+        </View>
+      </View>
+    <ScrollView  style={{ flex: 1,padding:8 ,minHeight:'100vh'}} backgroundColor={bg}>
       <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-        <Box>
-          <Avatar size="2xl" bg="blue.500" source={{ uri: `https://api.dicebear.com/7.x/lorelei/png?seed=${user?.name}` }} />
+        <Box display={'flex'} justifyContent="center" alignItems="center" width={'full'}>
+        <Image
+            source={{ uri: userData?.profilePhoto || `https://api.dicebear.com/7.x/lorelei/png?seed=${user?.name}` }}
+            alt="Profile preview"
+            borderRadius={100}
+            backgroundColor={'blue.400'}
+            style={{ width: 150, height:150, }}
+          />
         </Box>
-        <Box flexDirection="row" space={2}>
-          <Button variant="unstyled" onPress={()=>{navigation.navigate('Edit_Profile')}}>
-            <Icon as={AntDesign} name="edit" size={5} color="black" />
-          </Button>
-          <Button variant="unstyled" onPress={()=>{navigation.navigate('Login')}}>
-            <Icon as={AntDesign} name="logout" size={5} color="black" />
-          </Button>
-        </Box>
+      
       </Box>
-      <Box mt={4}>
+      <Box mt={4} display={'flex'} justifyContent="center" alignItems="center" width={'full'}>
         <Text fontSize="2xl" fontWeight="bold">{user?.name || "Arijit"}</Text>
         <Text color="gray.500">{user?.email || "arzit.panda@gmail.com"}</Text>
       </Box>
@@ -63,11 +109,12 @@ return (
       <Box mb={4}>
         <Text>
           <MaterialCommunityIcons name="home" size={20} color="gray.500" mr={2} />
-          Address: {user?.address || "Not provided"}
+          {userData?.address?.
+      streetAddress || "Not provided"}
         </Text>
         <Text mt={2}>
           <MaterialCommunityIcons name="phone" size={20} color="gray.500" mr={2} />
-          Phone No: {user?.phone || "Not provided"}
+          {user?.phone || "Not provided"}
         </Text>
         {/* Add more details like social links if available */}
       </Box>
@@ -75,7 +122,7 @@ return (
       <Box mb={4}>
         <Text>
           <MaterialCommunityIcons name="calendar" size={20} color="gray.500" mr={2} />
-          Date of Birth: {user?.DateOfBirth ? user.DateOfBirth.toDateString() : 'Not provided'}
+          Date of Birth: { user?.DateOfBirth ? user.DateOfBirth.toDateString() : 'Not provided' }
         </Text>
       </Box>
       <Text fontSize="xl">Teams</Text>
@@ -86,16 +133,51 @@ return (
         showsHorizontalScrollIndicator={false} // Hide scroll indicator for cleaner look
         keyExtractor={(item) => item._id}
       />
+   
+     <Text fontSize="lg" fontWeight="bold">Certificates</Text>
+      <Divider my={2} />
+      <List space={2} borderWidth={0} paddingX={5} >
+        {userData?.certifications.map((certification, index) => (
+           <Box bg={bgNav} mt={2} p={2} borderRadius={8} shadow={2}>
+           <Stack space={2} direction="row" alignItems="center">
+             <Image  size="100px" source={assets[0]}/>
+             <VStack space={2} flex={1}>
+               <Text fontSize={14} fontWeight="bold" color="coolGray.800">
+                 {certification.name.toUpperCase()}
+               </Text>
+               <Text fontSize={12} color="coolGray.600">
+                 Issuer: {certification.issuer}
+               </Text>
+               <Text fontSize={12} color="coolGray.600">
+                 Issued Date: {new Date(certification.issuedDate).toLocaleDateString()}
+               </Text>
+               {certification.url && (
+                 <TouchableOpacity onPress={() => Linking.openURL(certification.url)}>
+                   <Text fontSize={12} color="primary.500">
+                     URL: {certification.url}
+                   </Text>
+                 </TouchableOpacity>
+               )}
+             </VStack>
+           </Stack>
+         </Box>
+        ))}
+      </List>
+ 
+
+
+
       <Button
         bg="red.500"
         _pressed={{ bg: 'red.700' }}
         alignSelf="center"
         mt={4}
-        onPress={()=>{navigation.navigate("Login")}}
+        onPress={async ()=>{ contextData.setUser(null); await AsyncStorage.removeItem('userId');  navigation.navigate("SignUp")}}
       >
         Log Out
       </Button>
     </ScrollView>
+    </SafeAreaView>
   )}
 </Box>
 

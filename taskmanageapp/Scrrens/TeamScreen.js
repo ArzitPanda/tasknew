@@ -8,6 +8,8 @@ import {
   Pressable,
   FlatList,
   ActivityIndicator,
+  SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import {
   Box,
@@ -147,28 +149,18 @@ const TeamScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 20,
-        }}
-      >
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>My team</Text>
-        {/* <Button title="Add Team" onPress={showModal}>
+
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+<View style={{ backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, height: 60 }}>
      
-            </Button> */}
-<View 
-   style={{
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  }}
->
-        <IconButton
+      
+        <Button title="Filter" onPress={() => console.log("Filter pressed")} />
+        
+    
+      
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Team</Text>
+          <IconButton
           icon={<Ionicons name="add" size={24} color="black" />} // Example icon, replace with your desired icon
           onPress={() => {
             // Handle button press
@@ -176,11 +168,16 @@ const TeamScreen = () => {
           }}
           colorScheme="blue" // Use blue color scheme for the button
         />
-        <Button title="Filter" onPress={() => console.log("Filter pressed")} />
         
-    
         </View>
       </View>
+    <View style={{ flex: 1, padding: 20 }}>
+    
+        {/* <Button title="Add Team" onPress={showModal}>
+     
+            </Button> */}
+
+
 
       <Modal
     visible={visible}
@@ -242,6 +239,7 @@ const TeamScreen = () => {
         </View>
       )}
     </View>
+    </SafeAreaView>
   );
 };
 

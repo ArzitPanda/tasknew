@@ -50,7 +50,7 @@ const UserDetailForm = () => {
   const handleSubmit = async () => {
     const data = new FormData();
     data.append('profilePhoto', imgData);
-    data.append('userId', userId);
+    data.append('userId', user._id);
     // Append other form data
     formData.address && Object.entries(formData.address).forEach(([key, value]) => {
       data.append(`address[${key}]`, value);
