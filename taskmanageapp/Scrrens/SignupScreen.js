@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { VStack, Input, Button, HStack, Text} from 'native-base';
+import { VStack, Input, Button, HStack, Text, View} from 'native-base';
 import axios from 'axios';
-import {TouchableWithoutFeedback, Keyboard} from 'react-native'
+import {TouchableWithoutFeedback, Keyboard, Platform} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { BASE_URL } from '../Constant';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -13,10 +13,12 @@ const Signup = () => {
     const [name, setName] = useState(''); // State variable for name
     const [email, setEmail] = useState(''); // State variable for email
     const [password, setPassword] = useState('')
-
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showPicker, setShowPicker] = useState(false);
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || dateOfBirth;
         setDateOfBirth(currentDate);
+        setShowPicker(false)
     };
     const onFinish = async () => {
    
@@ -39,7 +41,11 @@ const Signup = () => {
             setLoading(false);
         }
     };
-
+    const openDatePicker = () => {
+        if (Platform.OS === 'android') {
+          setShowDatePicker(true);
+        }
+      };
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         
@@ -67,14 +73,26 @@ const Signup = () => {
                 />
             {/* <DatePicker placeholder="Date of Birth" /> */}
             <HStack alignItems="center">
-                <Text>Date of Birth:</Text>
-                <DateTimePicker
-                    value={dateOfBirth}
-                    mode="date"
-                    display="default"
-                    onChange={onChangeDate}
-                />
+            <View>
+      <Button  onPress={() => setShowPicker(true)}>show Date</Button> 
+      {showPicker && Platform.OS==="android" && (
+        <DateTimePicker
+          value={dateOfBirth}
+          mode="date"
+          display="default"
+          onChange={onChangeDate}
+        />
+      )}
+    </View>
             </HStack>
+            { Platform.OS === 'ios' && (
+        <DateTimePicker
+          value={dateOfBirth}
+          mode="date"
+          display="default"
+          onChange={onChangeDate}
+        />
+      )}
             <Button
                 onPress={onFinish}
                 colorScheme="indigo"
